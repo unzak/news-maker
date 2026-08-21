@@ -247,3 +247,25 @@ input[type="color"] {
     position: static;
   }
 }
+
+/* Mosca */
+.drop-sm {
+  padding: 14px;
+}
+
+.drop-sm p {
+  margin: 2px 0;
+}
+
+#inset-controls {
+  margin-top: 12px;
+}
+
+#inset-remove {
+  margin-top: 10px;
+}
+
+/* Señala que debajo del cursor hay mosca y no foto. */
+.preview.over-inset {
+  cursor: move;
+}

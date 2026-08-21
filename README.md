@@ -8,11 +8,14 @@ escribes el titular, y produce el PNG **1080 × 1350** listo para publicar.
 1. Arrastra una foto (o elígela con el botón).
 2. Ajusta el encuadre: el deslizador hace zoom, y arrastrando sobre la vista
    previa mueves la imagen.
-3. Escribe el titular. Lo que envuelvas en `*asteriscos*` sale en el color de
+3. Si quieres **mosca**, añade la segunda imagen: sale recortada en circulo con
+   un aro del color de resaltado. La barra cambia su tamaño y, pinchando encima
+   en la vista previa, la mueves (pinchando fuera reencuadras la foto).
+4. Escribe el titular. Lo que envuelvas en `*asteriscos*` sale en el color de
    resaltado, igual que "impulsarán la Liga F" en la plantilla original.
-4. Cambia los colores si quieres; "Colores del PSD" los devuelve al blanco y
+5. Cambia los colores si quieres; "Colores del PSD" los devuelve al blanco y
    amarillo de siempre.
-5. **GENERA**, y abajo aparece la imagen con el botón de descarga.
+6. **GENERA**, y abajo aparece la imagen con el botón de descarga.
 
 El titular se ajusta solo: parte las líneas donde toca y, si es muy largo,
 reduce el cuerpo hasta que quepa sin invadir el filete ni el borde inferior.
@@ -51,6 +54,7 @@ se adivinan mirando la imagen:
 | Ancho de párrafo | 1041,3 px | `bounds` del descriptor de tipo |
 | Baseline central | 1149,44 | líneas del PSD en 1071,9 / 1149,4 / 1226,9 |
 | Colores | `#ffffff` y `#ffde00` | `FillColor` del `StyleRun` |
+| Mosca por defecto | centro (828, 630), radio 168 | proporcion medida sobre una publicacion ya montada |
 
 Dos trampas que costaron encontrar, por si alguien vuelve por aquí:
 

@@ -53,3 +53,17 @@ export const COLOR_HIGHLIGHT = "#ffde00";
 
 /** Fondo bajo la foto (capa FONDO). */
 export const COLOR_BG = "#000000";
+
+/**
+ * Mosca circular opcional. Los valores por defecto salen de medir la
+ * proporcion en una publicacion ya montada: centro al 77% del ancho y al
+ * 47% del alto, y un diametro de ~31% del ancho.
+ */
+export const INSET_DEFAULT_CX = 828;
+export const INSET_DEFAULT_CY = 630;
+export const INSET_DEFAULT_R = 168;
+export const INSET_MIN_R = 90;
+export const INSET_MAX_R = 280;
+/** Grosor del aro respecto al radio, para que engorde con la mosca. */
+export const INSET_RING_RATIO = 0.12;
+export const INSET_RING_MIN = 6;

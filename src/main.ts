@@ -6,8 +6,17 @@ import {
   COLOR_HIGHLIGHT,
   FONT_FAMILY,
   FONT_WEIGHT,
+  INSET_DEFAULT_CX,
+  INSET_DEFAULT_CY,
+  INSET_DEFAULT_R,
+  PHOTO_H,
 } from "./format.js";
-import { render, type PhotoTransform } from "./render.js";
+import {
+  hitsInset,
+  render,
+  type Inset,
+  type PhotoTransform,
+} from "./render.js";
 import "./style.css";
 
 function need<T extends Element>(id: string): T {
@@ -27,6 +36,13 @@ const highEl = need<HTMLInputElement>("color-highlight");
 const resetColorsEl = need<HTMLButtonElement>("reset-colors");
 const generateEl = need<HTMLButtonElement>("generate");
 const statusEl = need<HTMLParagraphElement>("status");
+const dropInsetEl = need<HTMLDivElement>("drop-inset");
+const fileInsetEl = need<HTMLInputElement>("file-inset");
+const pickInsetEl = need<HTMLButtonElement>("pick-inset");
+const fileInsetNameEl = need<HTMLParagraphElement>("file-inset-name");
+const insetControlsEl = need<HTMLDivElement>("inset-controls");
+const insetSizeEl = need<HTMLInputElement>("inset-size");
+const insetRemoveEl = need<HTMLButtonElement>("inset-remove");
 const previewEl = need<HTMLCanvasElement>("preview");
 const outputEl = need<HTMLElement>("output");
 const resultEl = need<HTMLCanvasElement>("result");
@@ -41,6 +57,7 @@ let photo: HTMLImageElement | null = null;
 let photoSize: { width: number; height: number } | null = null;
 let overlay: HTMLImageElement | null = null;
 const transform: PhotoTransform = { zoom: 1, offsetX: 0, offsetY: 0 };
+let inset: Inset | null = null;
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -58,6 +75,7 @@ function draw(): void {
     photoSize,
     transform,
     overlay,
+    inset,
     text: textEl.value,
     colorBase: baseEl.value,
     colorHighlight: highEl.value,
@@ -130,32 +148,128 @@ zoomEl.addEventListener("input", () => {
   draw();
 });
 
-let dragging = false;
+let dragTarget: "photo" | "inset" | null = null;
 let lastX = 0;
 let lastY = 0;
 
+/** El canvas se muestra escalado: pasar coordenadas de pantalla a px del lienzo. */
+function canvasScale(): number {
+  return CANVAS_W / previewEl.getBoundingClientRect().width;
+}
+
+function canvasPoint(e: PointerEvent): { x: number; y: number } {
+  const rect = previewEl.getBoundingClientRect();
+  const s = canvasScale();
+  return { x: (e.clientX - rect.left) * s, y: (e.clientY - rect.top) * s };
+}
+
+/** Pinchar encima de la mosca la mueve a ella; fuera, reencuadra la foto. */
 previewEl.addEventListener("pointerdown", (e) => {
-  if (!photo) return;
-  dragging = true;
+  const p = canvasPoint(e);
+  if (inset && hitsInset(inset, p.x, p.y)) dragTarget = "inset";
+  else if (photo) dragTarget = "photo";
+  else return;
   lastX = e.clientX;
   lastY = e.clientY;
   previewEl.setPointerCapture(e.pointerId);
 });
+
 previewEl.addEventListener("pointermove", (e) => {
-  if (!dragging) return;
-  // El canvas se muestra escalado: pasar el movimiento a px del lienzo.
-  const scale = CANVAS_W / previewEl.getBoundingClientRect().width;
-  transform.offsetX += (e.clientX - lastX) * scale;
-  transform.offsetY += (e.clientY - lastY) * scale;
+  if (!dragTarget) {
+    // Sin arrastrar, la flecha indica que hay algo agarrable debajo.
+    const p = canvasPoint(e);
+    previewEl.classList.toggle(
+      "over-inset",
+      Boolean(inset && hitsInset(inset, p.x, p.y)),
+    );
+    return;
+  }
+  const s = canvasScale();
+  const dx = (e.clientX - lastX) * s;
+  const dy = (e.clientY - lastY) * s;
+  if (dragTarget === "inset" && inset) {
+    // Dejar siempre un trozo dentro del lienzo para poder recuperarla.
+    inset.cx = Math.min(CANVAS_W, Math.max(0, inset.cx + dx));
+    inset.cy = Math.min(PHOTO_H, Math.max(0, inset.cy + dy));
+  } else {
+    transform.offsetX += dx;
+    transform.offsetY += dy;
+  }
   lastX = e.clientX;
   lastY = e.clientY;
   draw();
 });
 for (const evt of ["pointerup", "pointercancel"] as const) {
   previewEl.addEventListener(evt, () => {
-    dragging = false;
+    dragTarget = null;
   });
 }
+
+/* ---------- mosca ---------- */
+
+async function useInsetFile(file: File): Promise<void> {
+  if (!file.type.startsWith("image/")) {
+    setStatus("Ese archivo no es una imagen.", "error");
+    return;
+  }
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await loadImage(url);
+    inset = {
+      image: img,
+      size: { width: img.naturalWidth, height: img.naturalHeight },
+      // Si ya habia mosca, respetar donde la habia dejado el usuario.
+      cx: inset?.cx ?? INSET_DEFAULT_CX,
+      cy: inset?.cy ?? INSET_DEFAULT_CY,
+      radius: inset?.radius ?? INSET_DEFAULT_R,
+    };
+    insetSizeEl.value = String(inset.radius);
+    insetControlsEl.hidden = false;
+    fileInsetNameEl.textContent = `${file.name} · ${img.naturalWidth}×${img.naturalHeight}`;
+    setStatus("Mosca añadida. Arrástrala en la vista previa para colocarla.");
+    draw();
+  } catch (err) {
+    setStatus(err instanceof Error ? err.message : "No se pudo abrir la imagen.", "error");
+  }
+}
+
+pickInsetEl.addEventListener("click", () => fileInsetEl.click());
+fileInsetEl.addEventListener("change", () => {
+  const file = fileInsetEl.files?.[0];
+  if (file) void useInsetFile(file);
+});
+
+for (const evt of ["dragenter", "dragover"] as const) {
+  dropInsetEl.addEventListener(evt, (e) => {
+    e.preventDefault();
+    dropInsetEl.classList.add("over");
+  });
+}
+for (const evt of ["dragleave", "drop"] as const) {
+  dropInsetEl.addEventListener(evt, (e) => {
+    e.preventDefault();
+    dropInsetEl.classList.remove("over");
+  });
+}
+dropInsetEl.addEventListener("drop", (e) => {
+  const file = e.dataTransfer?.files?.[0];
+  if (file) void useInsetFile(file);
+});
+
+insetSizeEl.addEventListener("input", () => {
+  if (!inset) return;
+  inset.radius = Number(insetSizeEl.value);
+  draw();
+});
+
+insetRemoveEl.addEventListener("click", () => {
+  inset = null;
+  insetControlsEl.hidden = true;
+  fileInsetEl.value = "";
+  fileInsetNameEl.textContent = "Sin mosca";
+  previewEl.classList.remove("over-inset");
+  draw();
+});
 
 /* ---------- texto y colores ---------- */
 
@@ -191,6 +305,7 @@ generateEl.addEventListener("click", () => {
     photoSize,
     transform,
     overlay,
+    inset,
     text: textEl.value,
     colorBase: baseEl.value,
     colorHighlight: highEl.value,

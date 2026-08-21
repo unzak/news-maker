@@ -6,6 +6,8 @@ import {
   FONT_FAMILY,
   FONT_SIZE,
   FONT_WEIGHT,
+  INSET_RING_MIN,
+  INSET_RING_RATIO,
   LINE_RATIO,
   OVERLAY_Y,
   PHOTO_H,
@@ -28,14 +30,41 @@ export interface PhotoTransform {
   offsetY: number;
 }
 
+/** Mosca circular: segunda imagen recortada en circulo, con aro de color. */
+export interface Inset {
+  image: CanvasImageSource;
+  size: { width: number; height: number };
+  cx: number;
+  cy: number;
+  radius: number;
+}
+
 export interface RenderOptions {
   photo: CanvasImageSource | null;
   photoSize: { width: number; height: number } | null;
   transform: PhotoTransform;
   overlay: CanvasImageSource;
+  inset: Inset | null;
   text: string;
   colorBase: string;
   colorHighlight: string;
+}
+
+/** Grosor del aro para un radio dado. Se usa tambien al detectar el clic. */
+export function ringWidth(radius: number): number {
+  return Math.max(INSET_RING_MIN, radius * INSET_RING_RATIO);
+}
+
+/** Radio total de la mosca, aro incluido. */
+export function insetOuterRadius(radius: number): number {
+  return radius + ringWidth(radius);
+}
+
+/** True si el punto cae sobre la mosca, para saber que se esta arrastrando. */
+export function hitsInset(inset: Inset, x: number, y: number): boolean {
+  const dx = x - inset.cx;
+  const dy = y - inset.cy;
+  return Math.hypot(dx, dy) <= insetOuterRadius(inset.radius);
 }
 
 /**
@@ -162,6 +191,40 @@ export function photoRect(
   };
 }
 
+function drawInset(
+  ctx: CanvasRenderingContext2D,
+  inset: Inset,
+  ringColor: string,
+): void {
+  const ring = ringWidth(inset.radius);
+  ctx.save();
+  // Recortar a la zona de foto: la mosca no debe pisar la banda del titular.
+  ctx.beginPath();
+  ctx.rect(0, 0, CANVAS_W, PHOTO_H);
+  ctx.clip();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(inset.cx, inset.cy, inset.radius, 0, Math.PI * 2);
+  ctx.clip();
+  const d = inset.radius * 2;
+  const scale = Math.max(d / inset.size.width, d / inset.size.height);
+  const w = inset.size.width * scale;
+  const h = inset.size.height * scale;
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(inset.image, inset.cx - w / 2, inset.cy - h / 2, w, h);
+  ctx.restore();
+
+  // El aro va por fuera de la imagen, no la recorta.
+  ctx.beginPath();
+  ctx.arc(inset.cx, inset.cy, inset.radius + ring / 2, 0, Math.PI * 2);
+  ctx.lineWidth = ring;
+  ctx.strokeStyle = ringColor;
+  ctx.stroke();
+  ctx.restore();
+}
+
 /** Pinta la noticia completa en el contexto dado, a tamaño 1080x1350. */
 export function render(ctx: CanvasRenderingContext2D, opts: RenderOptions): void {
   ctx.save();
@@ -179,6 +242,8 @@ export function render(ctx: CanvasRenderingContext2D, opts: RenderOptions): void
     ctx.drawImage(opts.photo, r.x, r.y, r.w, r.h);
     ctx.restore();
   }
+
+  if (opts.inset) drawInset(ctx, opts.inset, opts.colorHighlight);
 
   ctx.drawImage(opts.overlay, 0, OVERLAY_Y, CANVAS_W, CANVAS_H - OVERLAY_Y);
 
