@@ -275,6 +275,30 @@ previewEl.addEventListener("pointermove", (e) => {
   draw();
 });
 
+/** Rueda del raton: hace zoom de lo que haya bajo el cursor. */
+previewEl.addEventListener(
+  "wheel",
+  (e) => {
+    const target = targetAt(e.clientX, e.clientY);
+    if (!target) return;
+    e.preventDefault();
+    // deltaMode: 0 = px, 1 = lineas (Firefox), 2 = paginas.
+    const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 100 : 1;
+    // Exponencial, para que el paso se note igual en cualquier escala.
+    const factor = Math.exp((-e.deltaY * unit) / 600);
+    if (target === "inset" && inset) {
+      inset.radius = clamp(inset.radius * factor, INSET_MIN_R, INSET_MAX_R);
+      insetSizeEl.value = String(Math.round(inset.radius));
+    } else {
+      transform.zoom = clamp(transform.zoom * factor, ZOOM_MIN, ZOOM_MAX);
+      zoomEl.value = String(transform.zoom);
+    }
+    draw();
+  },
+  // Hace falta para poder cortar el scroll de la pagina.
+  { passive: false },
+);
+
 function move(target: Target, dx: number, dy: number): void {
   if (target === "inset" && inset) {
     // Dejar siempre un trozo dentro del lienzo para poder recuperarla.

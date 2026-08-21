@@ -43,8 +43,17 @@ export const TEXT_MAX_W = 1041.3;
  */
 export const BASELINE_CENTER = 1149.44;
 
-/** Margenes verticales donde el texto no debe invadir el filete ni el borde. */
-export const TEXT_SAFE_TOP = 960;
+/**
+ * Limite inferior del logo, medido sobre la capa INFERIOR en el hueco entre
+ * filetes (x 470..610), que es donde no hay filete que ensucie la medida.
+ */
+export const LOGO_BOTTOM = 978;
+
+/**
+ * Margenes verticales del texto. El de arriba sale del logo mas un respiro:
+ * con 960 el titular de 5 lineas se montaba encima de la cara.
+ */
+export const TEXT_SAFE_TOP = LOGO_BOTTOM + 8;
 export const TEXT_SAFE_BOTTOM = 1300;
 
 /** Colores del PSD: blanco base y amarillo de enfasis. */

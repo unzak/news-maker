@@ -17,10 +17,11 @@ escribes el titular, y produce el PNG **1080 × 1350** listo para publicar.
    amarillo de siempre.
 6. **GENERA**, y abajo aparece la imagen con el botón de descarga.
 
-En el móvil, el pellizco de dos dedos amplía y reduce: si el gesto cae sobre la
-mosca la escala a ella, y en cualquier otro sitio hace zoom de la foto de fondo.
-El punto medio de los dedos arrastra a la vez, así que se coloca y se dimensiona
-en un solo gesto.
+Para el zoom, la **rueda del ratón** en el ordenador y el **pellizco de dos dedos**
+en el móvil. Ambos actúan sobre la capa que hay debajo: encima de la mosca la escalan a
+ella, y en cualquier otro sitio hacen zoom de la foto de fondo. Al pellizcar, el
+punto medio de los dedos arrastra a la vez, así que se coloca y se dimensiona en
+un solo gesto.
 
 El titular se ajusta solo: parte las líneas donde toca y, si es muy largo,
 reduce el cuerpo hasta que quepa sin invadir el filete ni el borde inferior.
@@ -59,12 +60,16 @@ se adivinan mirando la imagen:
 | Ancho de párrafo | 1041,3 px | `bounds` del descriptor de tipo |
 | Baseline central | 1149,44 | líneas del PSD en 1071,9 / 1149,4 / 1226,9 |
 | Colores | `#ffffff` y `#ffde00` | `FillColor` del `StyleRun` |
+| Fin del logo | y = 978 | capa `INFERIOR`, medido entre filetes |
 | Mosca por defecto | centro (828, 630), radio 168 | proporcion medida sobre una publicacion ya montada |
 
 Dos trampas que costaron encontrar, por si alguien vuelve por aquí:
 
 - El `StyleSheet` trae `/Leading 79.16666`, pero **no se usa**: con
   `/AutoLeading true` Photoshop aplica el 1.2 del `ParagraphSheet`.
+- El margen superior del texto (`TEXT_SAFE_TOP`) sale del logo, que acaba en
+  y = 978, no de un numero redondo. Con el 960 que habia antes, un titular de 5
+  lineas encogia lo justo para caber por abajo y se montaba sobre la cara.
 - La capa `TEXTO` mide 1005 px de ancho, pero eso es la **tinta**
   (`boundingBox` = 1002,9 px), no la caja de composición. Recortar en 1005 parte
   "con cuatro partidos en abierto" (1006,4 px de avance) una palabra antes de
