@@ -17,6 +17,11 @@ escribes el titular, y produce el PNG **1080 × 1350** listo para publicar.
    amarillo de siempre.
 6. **GENERA**, y abajo aparece la imagen con el botón de descarga.
 
+En el móvil, el pellizco de dos dedos amplía y reduce: si el gesto cae sobre la
+mosca la escala a ella, y en cualquier otro sitio hace zoom de la foto de fondo.
+El punto medio de los dedos arrastra a la vez, así que se coloca y se dimensiona
+en un solo gesto.
+
 El titular se ajusta solo: parte las líneas donde toca y, si es muy largo,
 reduce el cuerpo hasta que quepa sin invadir el filete ni el borde inferior.
 

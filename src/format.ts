@@ -67,3 +67,7 @@ export const INSET_MAX_R = 280;
 /** Grosor del aro respecto al radio, para que engorde con la mosca. */
 export const INSET_RING_RATIO = 0.12;
 export const INSET_RING_MIN = 6;
+
+/** Limites del zoom de la foto de fondo. Mantener en sync con el input range. */
+export const ZOOM_MIN = 1;
+export const ZOOM_MAX = 3;

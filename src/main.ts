@@ -9,7 +9,11 @@ import {
   INSET_DEFAULT_CX,
   INSET_DEFAULT_CY,
   INSET_DEFAULT_R,
+  INSET_MAX_R,
+  INSET_MIN_R,
   PHOTO_H,
+  ZOOM_MAX,
+  ZOOM_MIN,
 } from "./format.js";
 import {
   hitsInset,
@@ -148,60 +152,155 @@ zoomEl.addEventListener("input", () => {
   draw();
 });
 
-let dragTarget: "photo" | "inset" | null = null;
+type Target = "photo" | "inset";
+
+/** Punteros activos sobre la vista previa, en coordenadas de pantalla. */
+const pointers = new Map<number, { x: number; y: number }>();
+let dragTarget: Target | null = null;
 let lastX = 0;
 let lastY = 0;
+
+/** Estado del pellizco, mientras haya dos dedos apoyados. */
+let pinch: { dist: number; zoom: number; radius: number } | null = null;
 
 /** El canvas se muestra escalado: pasar coordenadas de pantalla a px del lienzo. */
 function canvasScale(): number {
   return CANVAS_W / previewEl.getBoundingClientRect().width;
 }
 
-function canvasPoint(e: PointerEvent): { x: number; y: number } {
+function toCanvas(x: number, y: number): { x: number; y: number } {
   const rect = previewEl.getBoundingClientRect();
   const s = canvasScale();
-  return { x: (e.clientX - rect.left) * s, y: (e.clientY - rect.top) * s };
+  return { x: (x - rect.left) * s, y: (y - rect.top) * s };
 }
 
-/** Pinchar encima de la mosca la mueve a ella; fuera, reencuadra la foto. */
+function clamp(v: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, v));
+}
+
+/** Que se manipula segun donde caiga un punto: la mosca o la foto de fondo. */
+function targetAt(clientX: number, clientY: number): Target | null {
+  const p = toCanvas(clientX, clientY);
+  if (inset && hitsInset(inset, p.x, p.y)) return "inset";
+  return photo ? "photo" : null;
+}
+
+/** Distancia y punto medio entre los dos primeros dedos. */
+function pinchGeometry(): { dist: number; mx: number; my: number } | null {
+  const [a, b] = [...pointers.values()];
+  if (!a || !b) return null;
+  return {
+    dist: Math.hypot(a.x - b.x, a.y - b.y),
+    mx: (a.x + b.x) / 2,
+    my: (a.y + b.y) / 2,
+  };
+}
+
+function startPinch(): void {
+  const g = pinchGeometry();
+  if (!g) return;
+  // El destino lo decide el punto medio: pellizcar sobre la mosca la escala a
+  // ella, y en cualquier otro sitio hace zoom de la foto.
+  dragTarget = targetAt(g.mx, g.my);
+  if (!dragTarget) return;
+  pinch = {
+    dist: g.dist,
+    zoom: transform.zoom,
+    radius: inset?.radius ?? INSET_DEFAULT_R,
+  };
+  lastX = g.mx;
+  lastY = g.my;
+}
+
 previewEl.addEventListener("pointerdown", (e) => {
-  const p = canvasPoint(e);
-  if (inset && hitsInset(inset, p.x, p.y)) dragTarget = "inset";
-  else if (photo) dragTarget = "photo";
-  else return;
-  lastX = e.clientX;
-  lastY = e.clientY;
-  previewEl.setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+  if (pointers.size >= 2) {
+    startPinch();
+  } else {
+    // Un solo dedo o raton: pinchar encima de la mosca la mueve a ella.
+    dragTarget = targetAt(e.clientX, e.clientY);
+    lastX = e.clientX;
+    lastY = e.clientY;
+  }
+
+  // La captura mantiene el seguimiento aunque el dedo salga del lienzo.
+  // Va la ultima y protegida: si fallara, el arrastre debe seguir vivo.
+  try {
+    previewEl.setPointerCapture(e.pointerId);
+  } catch {
+    /* sin captura, pero el gesto sigue funcionando */
+  }
 });
 
 previewEl.addEventListener("pointermove", (e) => {
+  if (pointers.has(e.pointerId)) {
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  }
+
   if (!dragTarget) {
-    // Sin arrastrar, la flecha indica que hay algo agarrable debajo.
-    const p = canvasPoint(e);
+    // Sin arrastrar, el cursor indica que hay algo agarrable debajo.
+    const p = toCanvas(e.clientX, e.clientY);
     previewEl.classList.toggle(
       "over-inset",
       Boolean(inset && hitsInset(inset, p.x, p.y)),
     );
     return;
   }
+
   const s = canvasScale();
-  const dx = (e.clientX - lastX) * s;
-  const dy = (e.clientY - lastY) * s;
-  if (dragTarget === "inset" && inset) {
-    // Dejar siempre un trozo dentro del lienzo para poder recuperarla.
-    inset.cx = Math.min(CANVAS_W, Math.max(0, inset.cx + dx));
-    inset.cy = Math.min(PHOTO_H, Math.max(0, inset.cy + dy));
-  } else {
-    transform.offsetX += dx;
-    transform.offsetY += dy;
+
+  if (pinch && pointers.size >= 2) {
+    const g = pinchGeometry();
+    if (!g || pinch.dist === 0) return;
+    const ratio = g.dist / pinch.dist;
+    if (dragTarget === "inset" && inset) {
+      inset.radius = clamp(pinch.radius * ratio, INSET_MIN_R, INSET_MAX_R);
+      insetSizeEl.value = String(Math.round(inset.radius));
+    } else {
+      transform.zoom = clamp(pinch.zoom * ratio, ZOOM_MIN, ZOOM_MAX);
+      zoomEl.value = String(transform.zoom);
+    }
+    // El punto medio tambien arrastra, que es lo que espera el dedo.
+    move(dragTarget, (g.mx - lastX) * s, (g.my - lastY) * s);
+    lastX = g.mx;
+    lastY = g.my;
+    draw();
+    return;
   }
+
+  move(dragTarget, (e.clientX - lastX) * s, (e.clientY - lastY) * s);
   lastX = e.clientX;
   lastY = e.clientY;
   draw();
 });
+
+function move(target: Target, dx: number, dy: number): void {
+  if (target === "inset" && inset) {
+    // Dejar siempre un trozo dentro del lienzo para poder recuperarla.
+    inset.cx = clamp(inset.cx + dx, 0, CANVAS_W);
+    inset.cy = clamp(inset.cy + dy, 0, PHOTO_H);
+  } else {
+    transform.offsetX += dx;
+    transform.offsetY += dy;
+  }
+}
+
 for (const evt of ["pointerup", "pointercancel"] as const) {
-  previewEl.addEventListener(evt, () => {
-    dragTarget = null;
+  previewEl.addEventListener(evt, (e) => {
+    pointers.delete(e.pointerId);
+    pinch = null;
+    if (pointers.size === 1) {
+      // Al levantar un dedo, seguir arrastrando con el que queda en vez de
+      // dar un salto la proxima vez que se mueva.
+      const [p] = [...pointers.values()];
+      if (p) {
+        lastX = p.x;
+        lastY = p.y;
+      }
+    } else if (pointers.size === 0) {
+      dragTarget = null;
+    }
   });
 }
 
