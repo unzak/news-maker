@@ -275,6 +275,15 @@ previewEl.addEventListener("pointermove", (e) => {
   draw();
 });
 
+/**
+ * Suavidad de la rueda. Una muesca tipica manda deltaY 100, asi que con 2000
+ * sale un ~5% por muesca: hacen falta unas 22 para recorrer todo el rango.
+ * Cuanto mas alto, mas progresivo.
+ */
+const WHEEL_DIVISOR = 2000;
+/** Tope por evento, para que un golpe fuerte de rueda no pegue un salto. */
+const WHEEL_MAX_DELTA = 120;
+
 /** Rueda del raton: hace zoom de lo que haya bajo el cursor. */
 previewEl.addEventListener(
   "wheel",
@@ -284,8 +293,9 @@ previewEl.addEventListener(
     e.preventDefault();
     // deltaMode: 0 = px, 1 = lineas (Firefox), 2 = paginas.
     const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 100 : 1;
+    const delta = clamp(e.deltaY * unit, -WHEEL_MAX_DELTA, WHEEL_MAX_DELTA);
     // Exponencial, para que el paso se note igual en cualquier escala.
-    const factor = Math.exp((-e.deltaY * unit) / 600);
+    const factor = Math.exp(-delta / WHEEL_DIVISOR);
     if (target === "inset" && inset) {
       inset.radius = clamp(inset.radius * factor, INSET_MIN_R, INSET_MAX_R);
       insetSizeEl.value = String(Math.round(inset.radius));
