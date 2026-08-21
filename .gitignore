@@ -19,3 +19,7 @@ build/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Salidas de prueba
+_out.png
+_test-*.png

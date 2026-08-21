@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>News Maker · Cabronazi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="top">
+      <h1>News Maker</h1>
+      <p>Generador de noticias para el Facebook de Cabronazi · 1080 × 1350</p>
+    </header>
+
+    <main class="layout">
+      <section class="panel">
+        <h2>1 · Imagen</h2>
+        <div id="drop" class="drop">
+          <input type="file" id="file" accept="image/*" hidden />
+          <p><strong>Arrastra una foto aquí</strong></p>
+          <p class="muted">o</p>
+          <button type="button" id="pick" class="btn-secondary">Elegir archivo…</button>
+          <p class="muted small" id="file-name">Ningún archivo seleccionado</p>
+        </div>
+
+        <div class="field">
+          <label for="zoom">Encuadre <span class="muted small">· arrastra la vista previa para mover</span></label>
+          <input type="range" id="zoom" min="1" max="3" step="0.01" value="1" />
+        </div>
+
+        <h2>2 · Titular</h2>
+        <div class="field">
+          <label for="text">
+            Texto <span class="muted small">· envuelve en *asteriscos* lo que quieras resaltar</span>
+          </label>
+          <textarea id="text" rows="4" placeholder="TVE y TV3 *impulsarán la Liga F* con cuatro partidos en abierto por jornada"></textarea>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="color-base">Color base</label>
+            <input type="color" id="color-base" value="#ffffff" />
+          </div>
+          <div class="field">
+            <label for="color-highlight">Color resaltado</label>
+            <input type="color" id="color-highlight" value="#ffde00" />
+          </div>
+          <button type="button" id="reset-colors" class="btn-secondary">Colores del PSD</button>
+        </div>
+
+        <h2>3 · Generar</h2>
+        <button type="button" id="generate" class="btn-primary">GENERA</button>
+        <p class="muted small" id="status">Añade una imagen y un titular.</p>
+      </section>
+
+      <section class="panel preview-panel">
+        <h2>Vista previa</h2>
+        <canvas id="preview" class="preview" width="1080" height="1350"></canvas>
+        <p class="muted small">Arrastra sobre la imagen para reencuadrar.</p>
+      </section>
+    </main>
+
+    <section id="output" class="output" hidden>
+      <div class="output-head">
+        <h2>Imagen generada</h2>
+        <button type="button" id="download" class="btn-primary">Descargar PNG</button>
+      </div>
+      <canvas id="result" class="result" width="1080" height="1350"></canvas>
+      <p class="muted small" id="result-info"></p>
+    </section>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
