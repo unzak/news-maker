@@ -48,6 +48,8 @@ export interface RenderOptions {
   text: string;
   colorBase: string;
   colorHighlight: string;
+  /** Color del aro de la mosca, independiente del resaltado del titular. */
+  colorRing: string;
 }
 
 /** Grosor del aro para un radio dado. Se usa tambien al detectar el clic. */
@@ -243,7 +245,7 @@ export function render(ctx: CanvasRenderingContext2D, opts: RenderOptions): void
     ctx.restore();
   }
 
-  if (opts.inset) drawInset(ctx, opts.inset, opts.colorHighlight);
+  if (opts.inset) drawInset(ctx, opts.inset, opts.colorRing);
 
   ctx.drawImage(opts.overlay, 0, OVERLAY_Y, CANVAS_W, CANVAS_H - OVERLAY_Y);
 

@@ -4,6 +4,7 @@ import {
   CANVAS_W,
   COLOR_BASE,
   COLOR_HIGHLIGHT,
+  COLOR_RING,
   FONT_FAMILY,
   FONT_WEIGHT,
   INSET_DEFAULT_CX,
@@ -37,6 +38,7 @@ const zoomEl = need<HTMLInputElement>("zoom");
 const textEl = need<HTMLTextAreaElement>("text");
 const baseEl = need<HTMLInputElement>("color-base");
 const highEl = need<HTMLInputElement>("color-highlight");
+const ringEl = need<HTMLInputElement>("color-ring");
 const resetColorsEl = need<HTMLButtonElement>("reset-colors");
 const generateEl = need<HTMLButtonElement>("generate");
 const statusEl = need<HTMLParagraphElement>("status");
@@ -83,6 +85,7 @@ function draw(): void {
     text: textEl.value,
     colorBase: baseEl.value,
     colorHighlight: highEl.value,
+    colorRing: ringEl.value,
   });
 }
 
@@ -409,9 +412,11 @@ insetRemoveEl.addEventListener("click", () => {
 textEl.addEventListener("input", draw);
 baseEl.addEventListener("input", draw);
 highEl.addEventListener("input", draw);
+ringEl.addEventListener("input", draw);
 resetColorsEl.addEventListener("click", () => {
   baseEl.value = COLOR_BASE;
   highEl.value = COLOR_HIGHLIGHT;
+  ringEl.value = COLOR_RING;
   draw();
 });
 
@@ -442,6 +447,7 @@ generateEl.addEventListener("click", () => {
     text: textEl.value,
     colorBase: baseEl.value,
     colorHighlight: highEl.value,
+    colorRing: ringEl.value,
   });
   outputEl.hidden = false;
   resultInfoEl.textContent = `PNG ${CANVAS_W} × ${CANVAS_H} px · sin pérdida`;

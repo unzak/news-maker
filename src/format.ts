@@ -73,9 +73,15 @@ export const INSET_DEFAULT_CY = 630;
 export const INSET_DEFAULT_R = 168;
 export const INSET_MIN_R = 90;
 export const INSET_MAX_R = 280;
-/** Grosor del aro respecto al radio, para que engorde con la mosca. */
-export const INSET_RING_RATIO = 0.12;
-export const INSET_RING_MIN = 6;
+/**
+ * Grosor del aro respecto al radio, para que engorde con la mosca.
+ * Con el radio por defecto (168) da 16.8 px de aro.
+ */
+export const INSET_RING_RATIO = 0.1;
+export const INSET_RING_MIN = 5;
+
+/** Color inicial del aro: el mismo amarillo de enfasis del titular. */
+export const COLOR_RING = COLOR_HIGHLIGHT;
 
 /** Limites del zoom de la foto de fondo. Mantener en sync con el input range. */
 export const ZOOM_MIN = 1;

@@ -9,12 +9,12 @@ escribes el titular, y produce el PNG **1080 × 1350** listo para publicar.
 2. Ajusta el encuadre: el deslizador hace zoom, y arrastrando sobre la vista
    previa mueves la imagen.
 3. Si quieres **mosca**, añade la segunda imagen: sale recortada en circulo con
-   un aro del color de resaltado. La barra cambia su tamaño y, pinchando encima
+   un aro, que tiene su propio color en la fila de abajo. La barra cambia su tamaño y, pinchando encima
    en la vista previa, la mueves (pinchando fuera reencuadras la foto).
 4. Escribe el titular. Lo que envuelvas en `*asteriscos*` sale en el color de
    resaltado, igual que "impulsarán la Liga F" en la plantilla original.
-5. Cambia los colores si quieres; "Colores del PSD" los devuelve al blanco y
-   amarillo de siempre.
+5. Cambia los colores si quieres: base y resaltado del titular, y aro de la
+   mosca por separado. "Colores del PSD" devuelve los tres a su valor original.
 6. **GENERA**, y abajo aparece la imagen con el botón de descarga.
 
 Para el zoom, la **rueda del ratón** en el ordenador y el **pellizco de dos dedos**
@@ -62,6 +62,7 @@ se adivinan mirando la imagen:
 | Colores | `#ffffff` y `#ffde00` | `FillColor` del `StyleRun` |
 | Fin del logo | y = 978 | capa `INFERIOR`, medido entre filetes |
 | Mosca por defecto | centro (828, 630), radio 168 | proporcion medida sobre una publicacion ya montada |
+| Aro de la mosca | 10% del radio (16,8 px por defecto) | ajustado a ojo sobre la referencia |
 
 Dos trampas que costaron encontrar, por si alguien vuelve por aquí:
 
