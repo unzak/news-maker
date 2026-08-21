@@ -1,0 +1,21 @@
+# Dependencias
+node_modules/
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Entorno y secretos
+.env
+.env.*
+!.env.example
+
+# Build / salida
+dist/
+build/
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
