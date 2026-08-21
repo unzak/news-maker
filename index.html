@@ -79,7 +79,7 @@
         <p class="muted small" id="status">Añade una imagen y un titular.</p>
       </section>
 
-      <section class="panel preview-panel">
+      <section class="panel preview-panel" id="preview-panel">
         <h2>Vista previa</h2>
         <canvas id="preview" class="preview" width="1080" height="1350"></canvas>
         <p class="muted small">Arrastra sobre la mosca para moverla, o sobre el resto para reencuadrar la foto. En el móvil, pellizca con dos dedos; en el ordenador, usa la rueda del ratón.</p>
@@ -94,6 +94,26 @@
       <canvas id="result" class="result" width="1080" height="1350"></canvas>
       <p class="muted small" id="result-info"></p>
     </section>
+
+    <!-- Vista previa flotante. Solo aparece en pantallas estrechas. -->
+    <div id="mini" class="mini" aria-hidden="true">
+      <button
+        type="button"
+        id="mini-close"
+        class="mini-close"
+        aria-label="Cerrar la vista previa flotante"
+      >
+        ×
+      </button>
+      <canvas
+        id="mini-canvas"
+        class="mini-canvas"
+        width="240"
+        height="300"
+        role="img"
+        aria-label="Vista previa reducida. Tócala para ir a la vista previa completa."
+      ></canvas>
+    </div>
 
     <script type="module" src="/src/main.ts"></script>
   </body>

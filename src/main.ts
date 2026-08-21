@@ -54,10 +54,15 @@ const outputEl = need<HTMLElement>("output");
 const resultEl = need<HTMLCanvasElement>("result");
 const resultInfoEl = need<HTMLParagraphElement>("result-info");
 const downloadEl = need<HTMLButtonElement>("download");
+const previewPanelEl = need<HTMLElement>("preview-panel");
+const miniEl = need<HTMLDivElement>("mini");
+const miniCanvasEl = need<HTMLCanvasElement>("mini-canvas");
+const miniCloseEl = need<HTMLButtonElement>("mini-close");
 
 const previewCtx = previewEl.getContext("2d");
 const resultCtx = resultEl.getContext("2d", { willReadFrequently: false });
-if (!previewCtx || !resultCtx) throw new Error("Este navegador no soporta canvas 2D");
+const miniCtx = miniCanvasEl.getContext("2d");
+if (!previewCtx || !resultCtx || !miniCtx) throw new Error("Este navegador no soporta canvas 2D");
 
 let photo: HTMLImageElement | null = null;
 let photoSize: { width: number; height: number } | null = null;
@@ -87,7 +92,53 @@ function draw(): void {
     colorHighlight: highEl.value,
     colorRing: ringEl.value,
   });
+  drawMini();
+  updateMini();
 }
+
+/* ---------- vista previa flotante (movil) ---------- */
+
+/** Una vez cerrada a mano, no vuelve a salir en toda la sesion. */
+let miniDismissed = false;
+
+/**
+ * Cuanto antes de que asome el apartado de la previa se retira la miniatura.
+ * Justo encima esta el boton GENERA, asi que este margen hace que se quite
+ * cuando el boton empieza a entrar por abajo, en vez de taparlo.
+ */
+const MINI_HIDE_MARGIN = 120;
+
+/** Copia la previa grande en la miniatura: mas barato que volver a componer. */
+function drawMini(): void {
+  miniCtx!.drawImage(previewEl, 0, 0, miniCanvasEl.width, miniCanvasEl.height);
+}
+
+/** True cuando el apartado de la previa esta a la vista, o a punto de estarlo. */
+function previewIsNear(): boolean {
+  const rect = previewPanelEl.getBoundingClientRect();
+  return rect.top - MINI_HIDE_MARGIN < window.innerHeight && rect.bottom > 0;
+}
+
+function updateMini(): void {
+  // Solo tiene sentido cuando ya hay algo que mirar.
+  const show = !miniDismissed && photo !== null && !previewIsNear();
+  miniEl.classList.toggle("is-visible", show);
+  miniEl.setAttribute("aria-hidden", show ? "false" : "true");
+}
+
+for (const evt of ["scroll", "resize"] as const) {
+  window.addEventListener(evt, updateMini, { passive: true });
+}
+
+miniCloseEl.addEventListener("click", () => {
+  miniDismissed = true;
+  updateMini();
+});
+
+// Tocar la miniatura lleva a la previa grande.
+miniCanvasEl.addEventListener("click", () => {
+  previewEl.scrollIntoView({ behavior: "smooth", block: "center" });
+});
 
 function setStatus(msg: string, kind: "info" | "error" = "info"): void {
   statusEl.textContent = msg;

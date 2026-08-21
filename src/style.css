@@ -269,3 +269,66 @@ input[type="color"] {
 .preview.over-inset {
   cursor: move;
 }
+
+/* Vista previa flotante (solo movil) */
+.mini {
+  position: fixed;
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  z-index: 50;
+  width: 140px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+  /* Oculta por defecto: la media query de abajo es la que la deja salir. */
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .mini.is-visible {
+    display: block;
+    animation: mini-in 0.18s ease-out;
+  }
+}
+
+@keyframes mini-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.mini-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 7px;
+  background: #000;
+  cursor: pointer;
+}
+
+.mini-close {
+  position: absolute;
+  top: -9px;
+  left: -9px;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-size: 17px;
+  line-height: 1;
+  color: var(--text);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.mini-close:hover {
+  border-color: var(--accent);
+}

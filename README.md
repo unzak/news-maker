@@ -23,6 +23,11 @@ ella, y en cualquier otro sitio hacen zoom de la foto de fondo. Al pellizcar, el
 punto medio de los dedos arrastra a la vez, así que se coloca y se dimensiona en
 un solo gesto.
 
+En el móvil aparece una **miniatura flotante** abajo a la derecha en cuanto hay
+foto, para ir viendo el resultado mientras se escribe el titular. Se retira sola
+al llegar al apartado de la vista previa, se cierra con la ✕ (y ya no vuelve en
+esa sesión), y tocándola salta a la previa completa.
+
 El titular se ajusta solo: parte las líneas donde toca y, si es muy largo,
 reduce el cuerpo hasta que quepa sin invadir el filete ni el borde inferior.
 
