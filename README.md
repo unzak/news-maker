@@ -5,17 +5,17 @@ escribes el titular, y produce el PNG **1080 × 1350** listo para publicar.
 
 ## Uso
 
-1. Arrastra una foto (o elígela con el botón).
-2. Ajusta el encuadre: el deslizador hace zoom, y arrastrando sobre la vista
+1. Elige la **vertical**. Cambia el logo central por el distintivo de esa
+   cuenta; Cabronazi viene puesto por defecto.
+2. Arrastra una foto (o elígela con el botón).
+3. Ajusta el encuadre: el deslizador hace zoom, y arrastrando sobre la vista
    previa mueves la imagen.
-3. Si quieres **mosca**, añade la segunda imagen: sale recortada en circulo con
-   un aro, que tiene su propio color en la fila de abajo. Una barra cambia el tamaño del
-   círculo y otra el zoom de la imagen de dentro. Pinchando encima en la vista
-   previa la mueves (pinchando fuera reencuadras la foto).
-4. Escribe el titular. Lo que envuelvas en `*asteriscos*` sale en el color de
+4. Si quieres **mosca**, añade la segunda imagen: sale recortada en circulo con
+   un aro, que tiene su propio color en la fila de abajo. Una barra cambia el
+   tamaño del círculo y otra el zoom de la imagen de dentro. Pinchando encima en
+   la vista previa la mueves (pinchando fuera reencuadras la foto).
+5. Escribe el titular. Lo que envuelvas en `*asteriscos*` sale en el color de
    resaltado, igual que "impulsarán la Liga F" en la plantilla original.
-5. Elige la **vertical** si la noticia no es de Cabronazi: cambia el logo
-   central por el distintivo correspondiente.
 6. Cambia los colores si quieres: base y resaltado del titular, y aro de la
    mosca por separado. "Colores del PSD" devuelve los tres a su valor original.
 7. **GENERA**, y abajo aparece la imagen con el botón de descarga.

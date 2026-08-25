@@ -19,7 +19,21 @@
 
     <main class="layout">
       <section class="panel">
-        <h2>1 · Imagen</h2>
+        <h2>1 · Vertical</h2>
+        <div class="field">
+          <label for="vertical">
+            Cuenta <span class="muted small">· cambia el logo central</span>
+          </label>
+          <select id="vertical">
+            <option value="cabronazi" selected>Cabronazi</option>
+            <option value="peludos">Cabropeludos</option>
+            <option value="gamer">Cabrogamer</option>
+            <option value="deportes">Cabrodeportes</option>
+            <option value="motor">Cabromotor</option>
+          </select>
+        </div>
+
+        <h2>2 · Imagen</h2>
         <div id="drop" class="drop">
           <input type="file" id="file" accept="image/*" hidden />
           <p><strong>Arrastra una foto aquí</strong></p>
@@ -33,7 +47,7 @@
           <input type="range" id="zoom" min="1" max="3" step="0.01" value="1" />
         </div>
 
-        <h2>2 · Mosca <span class="muted small">· opcional</span></h2>
+        <h2>3 · Mosca <span class="muted small">· opcional</span></h2>
         <div id="drop-inset" class="drop drop-sm">
           <input type="file" id="file-inset" accept="image/*" hidden />
           <p><strong>Arrastra la segunda imagen</strong></p>
@@ -56,7 +70,7 @@
           <button type="button" id="inset-remove" class="btn-secondary">Quitar mosca</button>
         </div>
 
-        <h2>3 · Titular</h2>
+        <h2>4 · Titular</h2>
         <div class="field">
           <label for="text">
             Texto <span class="muted small">· envuelve en *asteriscos* lo que quieras resaltar</span>
@@ -80,20 +94,7 @@
           <button type="button" id="reset-colors" class="btn-secondary">Colores del PSD</button>
         </div>
 
-        <div class="field">
-          <label for="vertical">
-            Vertical <span class="muted small">· cambia el logo central</span>
-          </label>
-          <select id="vertical">
-            <option value="cabronazi" selected>Cabronazi</option>
-            <option value="peludos">Cabropeludos</option>
-            <option value="gamer">Cabrogamer</option>
-            <option value="deportes">Cabrodeportes</option>
-            <option value="motor">Cabromotor</option>
-          </select>
-        </div>
-
-        <h2>4 · Generar</h2>
+        <h2>5 · Generar</h2>
         <button type="button" id="generate" class="btn-primary">GENERA</button>
         <p class="muted small" id="status">Añade una imagen y un titular.</p>
       </section>
