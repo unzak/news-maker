@@ -105,16 +105,26 @@ export const LOGO_CY = LOGO_Y + LOGO_H / 2;
  */
 export const BADGE_SIZE = LOGO_H;
 
-/** Las verticales, en el orden en que salen en el desplegable. */
+/**
+ * Las verticales, en el orden en que salen en el desplegable. El color es el
+ * dominante de cada logo, y tiñe tambien el halo de los filetes.
+ */
 export const VERTICALS = [
-  { id: "cabronazi", label: "Cabronazi" },
-  { id: "peludos", label: "Cabropeludos" },
-  { id: "gamer", label: "Cabrogamer" },
-  { id: "deportes", label: "Cabrodeportes" },
-  { id: "motor", label: "Cabromotor" },
+  { id: "cabronazi", label: "Cabronazi", color: "#cc1c65" },
+  { id: "peludos", label: "Cabropeludos", color: "#890081" },
+  { id: "gamer", label: "Cabrogamer", color: "#003392" },
+  { id: "deportes", label: "Cabrodeportes", color: "#00ce5c" },
+  { id: "motor", label: "Cabromotor", color: "#ed282b" },
 ] as const;
 
 export type VerticalId = (typeof VERTICALS)[number]["id"];
+
+/**
+ * Banda de los filetes, separada del overlay para poder teñir el halo. El
+ * nucleo blanco y el halo van en dos mascaras, porque solo el halo cambia.
+ */
+export const RULE_Y = 914;
+export const RULE_H = 25;
 
 /**
  * Colores preestablecidos de los selectores. Blanco y amarillo son los del

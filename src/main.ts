@@ -4,6 +4,8 @@ import logoDeportes from "./assets/logo-deportes.png";
 import logoGamer from "./assets/logo-gamer.png";
 import logoMotor from "./assets/logo-motor.png";
 import logoPeludos from "./assets/logo-peludos.png";
+import ruleCoreUrl from "./assets/rule-core.png";
+import ruleGlowUrl from "./assets/rule-glow.png";
 import {
   CANVAS_H,
   CANVAS_W,
@@ -17,6 +19,7 @@ import {
   BADGE_SIZE,
   PHOTO_H,
   SWATCHES,
+  VERTICALS,
   type VerticalId,
   ZOOM_MAX,
   ZOOM_MIN,
@@ -75,6 +78,8 @@ if (!previewCtx || !resultCtx || !miniCtx) throw new Error("Este navegador no so
 let photo: HTMLImageElement | null = null;
 let photoSize: { width: number; height: number } | null = null;
 let overlay: HTMLImageElement | null = null;
+let ruleGlow: HTMLImageElement | null = null;
+let ruleCore: HTMLImageElement | null = null;
 const transform: PhotoTransform = { zoom: 1, offsetX: 0, offsetY: 0 };
 let inset: Inset | null = null;
 
@@ -103,6 +108,12 @@ function currentVertical(): VerticalId {
   return verticalEl.value as VerticalId;
 }
 
+/** Color de marca de la vertical elegida, para el halo de los filetes. */
+function currentColor(): string {
+  const v = VERTICALS.find((x) => x.id === currentVertical());
+  return v?.color ?? VERTICALS[0].color;
+}
+
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -113,12 +124,15 @@ function loadImage(src: string): Promise<HTMLImageElement> {
 }
 
 function draw(): void {
-  if (!overlay) return;
+  if (!overlay || !ruleGlow || !ruleCore) return;
   render(previewCtx!, {
     photo,
     photoSize,
     transform,
     overlay,
+    ruleGlow,
+    ruleCore,
+    ruleColor: currentColor(),
     logo: logos.get(currentVertical()) ?? null,
     logoSize: currentVertical() === "cabronazi" ? null : BADGE_SIZE,
     inset,
@@ -600,7 +614,7 @@ function stamp(): string {
 }
 
 generateEl.addEventListener("click", () => {
-  if (!overlay) return;
+  if (!overlay || !ruleGlow || !ruleCore) return;
   if (!photo) {
     setStatus("Añade una imagen antes de generar.", "error");
     return;
@@ -614,6 +628,9 @@ generateEl.addEventListener("click", () => {
     photoSize,
     transform,
     overlay,
+    ruleGlow,
+    ruleCore,
+    ruleColor: currentColor(),
     logo: logos.get(currentVertical()) ?? null,
     logoSize: currentVertical() === "cabronazi" ? null : BADGE_SIZE,
     inset,
@@ -648,13 +665,17 @@ downloadEl.addEventListener("click", () => {
 async function boot(): Promise<void> {
   buildSwatches();
   markSwatches();
-  const [ov, ...cargados] = await Promise.all([
+  const [ov, glow, core, ...cargados] = await Promise.all([
     loadImage(overlayUrl),
+    loadImage(ruleGlowUrl),
+    loadImage(ruleCoreUrl),
     ...Object.entries(LOGO_URLS).map(async ([id, url]) => {
       logos.set(id as VerticalId, await loadImage(url));
     }),
   ]);
   overlay = ov as HTMLImageElement;
+  ruleGlow = glow as HTMLImageElement;
+  ruleCore = core as HTMLImageElement;
   void cargados;
   // Sin esperar a la fuente, el primer render saldria con la tipografia de respaldo.
   try {

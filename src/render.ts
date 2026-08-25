@@ -15,6 +15,8 @@ import {
   LINE_RATIO,
   OVERLAY_Y,
   PHOTO_H,
+  RULE_H,
+  RULE_Y,
   TEXT_MAX_W,
   TEXT_SAFE_BOTTOM,
   TEXT_SAFE_TOP,
@@ -53,6 +55,11 @@ export interface RenderOptions {
   photoSize: { width: number; height: number } | null;
   transform: PhotoTransform;
   overlay: CanvasImageSource;
+  /** Mascaras de los filetes: halo teñible y nucleo blanco fijo. */
+  ruleGlow: CanvasImageSource;
+  ruleCore: CanvasImageSource;
+  /** Color del halo de los filetes: el de la vertical elegida. */
+  ruleColor: string;
   /** Logo de la vertical. Va aparte del overlay para poder cambiarlo. */
   logo: CanvasImageSource | null;
   /** Lado del logo, o null para dejar la mascota a su tamaño original. */
@@ -265,6 +272,39 @@ function drawInset(
   ctx.restore();
 }
 
+/** Lienzo auxiliar donde se tiñe el halo. Se reaprovecha entre pintadas. */
+let tintCanvas: HTMLCanvasElement | null = null;
+
+/**
+ * Pinta los dos filetes. El halo es una mascara que se tiñe con el color de la
+ * vertical; el nucleo blanco va encima y no cambia nunca.
+ */
+function drawRules(
+  ctx: CanvasRenderingContext2D,
+  glow: CanvasImageSource,
+  core: CanvasImageSource,
+  color: string,
+): void {
+  tintCanvas ??= document.createElement("canvas");
+  const t = tintCanvas;
+  if (t.width !== CANVAS_W || t.height !== RULE_H) {
+    t.width = CANVAS_W;
+    t.height = RULE_H;
+  }
+  const tc = t.getContext("2d");
+  if (!tc) return;
+  tc.clearRect(0, 0, CANVAS_W, RULE_H);
+  tc.globalCompositeOperation = "source-over";
+  tc.drawImage(glow, 0, 0, CANVAS_W, RULE_H);
+  // "source-in" cambia el color conservando el alfa: eso tiñe la mascara.
+  tc.globalCompositeOperation = "source-in";
+  tc.fillStyle = color;
+  tc.fillRect(0, 0, CANVAS_W, RULE_H);
+
+  ctx.drawImage(t, 0, RULE_Y, CANVAS_W, RULE_H);
+  ctx.drawImage(core, 0, RULE_Y, CANVAS_W, RULE_H);
+}
+
 /** Pinta la noticia completa en el contexto dado, a tamaño 1080x1350. */
 export function render(ctx: CanvasRenderingContext2D, opts: RenderOptions): void {
   ctx.save();
@@ -286,6 +326,8 @@ export function render(ctx: CanvasRenderingContext2D, opts: RenderOptions): void
   if (opts.inset) drawInset(ctx, opts.inset, opts.colorRing);
 
   ctx.drawImage(opts.overlay, 0, OVERLAY_Y, CANVAS_W, CANVAS_H - OVERLAY_Y);
+
+  drawRules(ctx, opts.ruleGlow, opts.ruleCore, opts.ruleColor);
 
   if (opts.logo) {
     ctx.imageSmoothingEnabled = true;

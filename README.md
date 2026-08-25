@@ -6,7 +6,8 @@ escribes el titular, y produce el PNG **1080 × 1350** listo para publicar.
 ## Uso
 
 1. Elige la **vertical**. Cambia el logo central por el distintivo de esa
-   cuenta; Cabronazi viene puesto por defecto.
+   cuenta y tiñe el halo de los filetes con su color; Cabronazi viene puesto
+   por defecto.
 2. Arrastra una foto (o elígela con el botón).
 3. Ajusta el encuadre: el deslizador hace zoom, y arrastrando sobre la vista
    previa mueves la imagen.
@@ -110,6 +111,18 @@ overlay original es de 0,002 / 255 de media.
 Los distintivos de las demás verticales son circulares y se escalan al alto de
 la mascota (127 px), centrados en el hueco entre filetes. Así ocupan lo mismo y
 no hay que tocar `TEXT_SAFE_TOP`.
+
+Los filetes salieron del overlay por el mismo motivo. Cada uno es un núcleo
+blanco de 3 px con un halo alrededor, y ese halo resultó ser el rosa `#cc1c65` a
+opacidad variable, así que se puede teñir con el color de cada vertical. Van en
+dos máscaras, `rule-glow.png` y `rule-core.png`, de 1080 × 25 px y apenas 1,5 KB
+entre las dos: el halo se tiñe en un lienzo auxiliar con `source-in` y el núcleo
+se pinta encima sin tocarlo.
+
+**La descomposición hay que hacerla en premultiplicado.** Haciéndola sobre el
+color recto el halo sale un 10 % más claro, porque la mezcla con el fondo ocurre
+en premultiplicado. Con los valores correctos, la banda del filete reproduce el
+PSD con 1,84 / 255 de diferencia media.
 
 ## Fuente
 
