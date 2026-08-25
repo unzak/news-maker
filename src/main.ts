@@ -55,6 +55,7 @@ const insetControlsEl = need<HTMLDivElement>("inset-controls");
 const insetSizeEl = need<HTMLInputElement>("inset-size");
 const insetZoomEl = need<HTMLInputElement>("inset-zoom");
 const insetRemoveEl = need<HTMLButtonElement>("inset-remove");
+const ringColorFieldEl = need<HTMLDivElement>("ring-color-field");
 const previewEl = need<HTMLCanvasElement>("preview");
 const outputEl = need<HTMLElement>("output");
 const resultEl = need<HTMLCanvasElement>("result");
@@ -420,6 +421,12 @@ for (const evt of ["pointerup", "pointercancel"] as const) {
 
 /* ---------- mosca ---------- */
 
+/** Los controles de la mosca y el color de su aro solo salen si hay imagen. */
+function setInsetUI(visible: boolean): void {
+  insetControlsEl.hidden = !visible;
+  ringColorFieldEl.hidden = !visible;
+}
+
 async function useInsetFile(file: File): Promise<void> {
   if (!file.type.startsWith("image/")) {
     setStatus("Ese archivo no es una imagen.", "error");
@@ -440,7 +447,7 @@ async function useInsetFile(file: File): Promise<void> {
     };
     insetSizeEl.value = String(inset.radius);
     insetZoomEl.value = "1";
-    insetControlsEl.hidden = false;
+    setInsetUI(true);
     fileInsetNameEl.textContent = `${file.name} · ${img.naturalWidth}×${img.naturalHeight}`;
     setStatus("Mosca añadida. Arrástrala en la vista previa para colocarla.");
     draw();
@@ -486,7 +493,7 @@ insetZoomEl.addEventListener("input", () => {
 
 insetRemoveEl.addEventListener("click", () => {
   inset = null;
-  insetControlsEl.hidden = true;
+  setInsetUI(false);
   fileInsetEl.value = "";
   fileInsetNameEl.textContent = "Sin mosca";
   insetZoomEl.value = "1";

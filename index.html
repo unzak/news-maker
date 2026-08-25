@@ -93,8 +93,9 @@
               <div class="swatches" data-target="color-highlight"></div>
             </div>
           </div>
-          <div class="color-field">
-            <label for="color-ring">Aro de la mosca</label>
+          <!-- Solo tiene sentido cuando hay mosca; se muestra desde main.ts. -->
+          <div class="color-field" id="ring-color-field" hidden>
+            <label for="color-ring">Color aro de la mosca</label>
             <div class="color-line">
               <input type="color" id="color-ring" value="#ffde00" />
               <div class="swatches" data-target="color-ring"></div>
