@@ -17,7 +17,8 @@ escribes el titular, y produce el PNG **1080 × 1350** listo para publicar.
 5. Escribe el titular. Lo que envuelvas en `*asteriscos*` sale en el color de
    resaltado, igual que "impulsarán la Liga F" en la plantilla original.
 6. Cambia los colores si quieres: base y resaltado del titular, y aro de la
-   mosca por separado. "Colores del PSD" devuelve los tres a su valor original.
+   mosca por separado. Cada uno lleva la paleta de la casa (blanco, amarillo y
+   el color de cada vertical) ademas del selector libre.
 7. **GENERA**, y abajo aparece la imagen con el botón de descarga.
 
 Para el zoom, la **rueda del ratón** en el ordenador y el **pellizco de dos dedos**

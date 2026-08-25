@@ -80,9 +80,6 @@ export const INSET_MAX_R = 280;
 export const INSET_RING_RATIO = 0.1;
 export const INSET_RING_MIN = 5;
 
-/** Color inicial del aro: el mismo amarillo de enfasis del titular. */
-export const COLOR_RING = COLOR_HIGHLIGHT;
-
 /** Limites del zoom de la foto de fondo. Mantener en sync con el input range. */
 export const ZOOM_MIN = 1;
 export const ZOOM_MAX = 3;
@@ -118,3 +115,18 @@ export const VERTICALS = [
 ] as const;
 
 export type VerticalId = (typeof VERTICALS)[number]["id"];
+
+/**
+ * Colores preestablecidos de los selectores. Blanco y amarillo son los del
+ * titular en el PSD; los cinco restantes son el color dominante de cada logo,
+ * medido sobre los PNG originales a 1080 px.
+ */
+export const SWATCHES = [
+  { name: "Blanco", hex: COLOR_BASE },
+  { name: "Amarillo", hex: COLOR_HIGHLIGHT },
+  { name: "Rosa Cabronazi", hex: "#cc1c65" },
+  { name: "Morado Cabropeludos", hex: "#890081" },
+  { name: "Azul Cabrogamer", hex: "#003392" },
+  { name: "Verde Cabrodeportes", hex: "#00ce5c" },
+  { name: "Rojo Cabromotor", hex: "#ed282b" },
+] as const;

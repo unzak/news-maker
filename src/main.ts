@@ -7,9 +7,6 @@ import logoPeludos from "./assets/logo-peludos.png";
 import {
   CANVAS_H,
   CANVAS_W,
-  COLOR_BASE,
-  COLOR_HIGHLIGHT,
-  COLOR_RING,
   FONT_FAMILY,
   FONT_WEIGHT,
   INSET_DEFAULT_CX,
@@ -19,6 +16,7 @@ import {
   INSET_MIN_R,
   BADGE_SIZE,
   PHOTO_H,
+  SWATCHES,
   type VerticalId,
   ZOOM_MAX,
   ZOOM_MIN,
@@ -46,7 +44,6 @@ const textEl = need<HTMLTextAreaElement>("text");
 const baseEl = need<HTMLInputElement>("color-base");
 const highEl = need<HTMLInputElement>("color-highlight");
 const ringEl = need<HTMLInputElement>("color-ring");
-const resetColorsEl = need<HTMLButtonElement>("reset-colors");
 const verticalEl = need<HTMLSelectElement>("vertical");
 const generateEl = need<HTMLButtonElement>("generate");
 const statusEl = need<HTMLParagraphElement>("status");
@@ -500,17 +497,46 @@ insetRemoveEl.addEventListener("click", () => {
 /* ---------- texto y colores ---------- */
 
 textEl.addEventListener("input", draw);
-baseEl.addEventListener("input", draw);
-highEl.addEventListener("input", draw);
-ringEl.addEventListener("input", draw);
+for (const el of [baseEl, highEl, ringEl]) {
+  el.addEventListener("input", () => {
+    markSwatches();
+    draw();
+  });
+}
 verticalEl.addEventListener("change", draw);
 
-resetColorsEl.addEventListener("click", () => {
-  baseEl.value = COLOR_BASE;
-  highEl.value = COLOR_HIGHLIGHT;
-  ringEl.value = COLOR_RING;
-  draw();
-});
+/** Pinta los preestablecidos bajo cada selector y marca el que esta puesto. */
+function buildSwatches(): void {
+  for (const box of document.querySelectorAll<HTMLDivElement>(".swatches")) {
+    const input = document.getElementById(box.dataset.target ?? "");
+    if (!(input instanceof HTMLInputElement)) continue;
+    for (const { name, hex } of SWATCHES) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "swatch";
+      b.style.background = hex;
+      b.title = name;
+      b.setAttribute("aria-label", name);
+      b.dataset.hex = hex;
+      b.addEventListener("click", () => {
+        input.value = hex;
+        // El evento es el que dispara el redibujado y el marcado.
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      });
+      box.append(b);
+    }
+  }
+}
+
+function markSwatches(): void {
+  for (const box of document.querySelectorAll<HTMLDivElement>(".swatches")) {
+    const input = document.getElementById(box.dataset.target ?? "");
+    if (!(input instanceof HTMLInputElement)) continue;
+    for (const b of box.querySelectorAll<HTMLButtonElement>(".swatch")) {
+      b.classList.toggle("is-active", b.dataset.hex === input.value.toLowerCase());
+    }
+  }
+}
 
 /* ---------- generar y descargar ---------- */
 
@@ -567,6 +593,8 @@ downloadEl.addEventListener("click", () => {
 /* ---------- arranque ---------- */
 
 async function boot(): Promise<void> {
+  buildSwatches();
+  markSwatches();
   const [ov, ...cargados] = await Promise.all([
     loadImage(overlayUrl),
     ...Object.entries(LOGO_URLS).map(async ([id, url]) => {

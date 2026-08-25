@@ -348,3 +348,49 @@ select {
 select:hover {
   border-color: var(--accent);
 }
+
+/* Colores: selector nativo mas preestablecidos */
+.colors {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.color-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.color-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.swatches {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.swatch {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.swatch:hover {
+  border-color: var(--text);
+}
+
+/* El activo se marca por fuera, para no falsear el color de la muestra. */
+.swatch.is-active {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}

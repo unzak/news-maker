@@ -78,20 +78,28 @@
           <textarea id="text" rows="4" placeholder="TVE y TV3 *impulsarán la Liga F* con cuatro partidos en abierto por jornada"></textarea>
         </div>
 
-        <div class="row">
-          <div class="field">
+        <div class="colors">
+          <div class="color-field">
             <label for="color-base">Color base</label>
-            <input type="color" id="color-base" value="#ffffff" />
+            <div class="color-line">
+              <input type="color" id="color-base" value="#ffffff" />
+              <div class="swatches" data-target="color-base"></div>
+            </div>
           </div>
-          <div class="field">
+          <div class="color-field">
             <label for="color-highlight">Color resaltado</label>
-            <input type="color" id="color-highlight" value="#ffde00" />
+            <div class="color-line">
+              <input type="color" id="color-highlight" value="#ffde00" />
+              <div class="swatches" data-target="color-highlight"></div>
+            </div>
           </div>
-          <div class="field">
+          <div class="color-field">
             <label for="color-ring">Aro de la mosca</label>
-            <input type="color" id="color-ring" value="#ffde00" />
+            <div class="color-line">
+              <input type="color" id="color-ring" value="#ffde00" />
+              <div class="swatches" data-target="color-ring"></div>
+            </div>
           </div>
-          <button type="button" id="reset-colors" class="btn-secondary">Colores del PSD</button>
         </div>
 
         <h2>5 · Generar</h2>
