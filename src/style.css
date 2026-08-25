@@ -332,3 +332,19 @@ input[type="color"] {
 .mini-close:hover {
   border-color: var(--accent);
 }
+
+select {
+  width: 100%;
+  padding: 9px 12px;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+select:hover {
+  border-color: var(--accent);
+}

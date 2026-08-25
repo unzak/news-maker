@@ -86,3 +86,35 @@ export const COLOR_RING = COLOR_HIGHLIGHT;
 /** Limites del zoom de la foto de fondo. Mantener en sync con el input range. */
 export const ZOOM_MIN = 1;
 export const ZOOM_MAX = 3;
+
+/**
+ * Caja de la mascota de Cabronazi, tal cual venia dentro de la capa INFERIOR.
+ * El overlay se guarda ya sin ella, y el logo se pinta encima aparte, para
+ * poder cambiarlo por el de otra vertical.
+ */
+export const LOGO_X = 464;
+export const LOGO_Y = 852;
+export const LOGO_W = 151;
+export const LOGO_H = 127;
+
+/** Centro del hueco entre filetes: ahi va el logo, sea cual sea. */
+export const LOGO_CX = LOGO_X + LOGO_W / 2;
+export const LOGO_CY = LOGO_Y + LOGO_H / 2;
+
+/**
+ * Lado del distintivo circular de las demas verticales. Se iguala al alto de
+ * la mascota para que ocupe lo mismo: asi no hay que tocar TEXT_SAFE_TOP y
+ * quedan 12 px de aire hasta los filetes, igual que con Cabronazi.
+ */
+export const BADGE_SIZE = LOGO_H;
+
+/** Las verticales, en el orden en que salen en el desplegable. */
+export const VERTICALS = [
+  { id: "cabronazi", label: "Cabronazi" },
+  { id: "peludos", label: "Cabropeludos" },
+  { id: "gamer", label: "Cabrogamer" },
+  { id: "deportes", label: "Cabrodeportes" },
+  { id: "motor", label: "Cabromotor" },
+] as const;
+
+export type VerticalId = (typeof VERTICALS)[number]["id"];

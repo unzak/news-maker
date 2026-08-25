@@ -1,4 +1,9 @@
 import overlayUrl from "./assets/overlay.png";
+import logoCabronazi from "./assets/logo-cabronazi.png";
+import logoDeportes from "./assets/logo-deportes.png";
+import logoGamer from "./assets/logo-gamer.png";
+import logoMotor from "./assets/logo-motor.png";
+import logoPeludos from "./assets/logo-peludos.png";
 import {
   CANVAS_H,
   CANVAS_W,
@@ -12,7 +17,9 @@ import {
   INSET_DEFAULT_R,
   INSET_MAX_R,
   INSET_MIN_R,
+  BADGE_SIZE,
   PHOTO_H,
+  type VerticalId,
   ZOOM_MAX,
   ZOOM_MIN,
 } from "./format.js";
@@ -40,6 +47,7 @@ const baseEl = need<HTMLInputElement>("color-base");
 const highEl = need<HTMLInputElement>("color-highlight");
 const ringEl = need<HTMLInputElement>("color-ring");
 const resetColorsEl = need<HTMLButtonElement>("reset-colors");
+const verticalEl = need<HTMLSelectElement>("vertical");
 const generateEl = need<HTMLButtonElement>("generate");
 const statusEl = need<HTMLParagraphElement>("status");
 const dropInsetEl = need<HTMLDivElement>("drop-inset");
@@ -70,6 +78,24 @@ let overlay: HTMLImageElement | null = null;
 const transform: PhotoTransform = { zoom: 1, offsetX: 0, offsetY: 0 };
 let inset: Inset | null = null;
 
+/**
+ * Un archivo por vertical. Cabronazi es la mascota recortada de la capa
+ * INFERIOR y va a su tamaño original; las demas son distintivos circulares
+ * que se escalan a BADGE_SIZE.
+ */
+const LOGO_URLS: Record<VerticalId, string> = {
+  cabronazi: logoCabronazi,
+  peludos: logoPeludos,
+  gamer: logoGamer,
+  deportes: logoDeportes,
+  motor: logoMotor,
+};
+const logos = new Map<VerticalId, HTMLImageElement>();
+
+function currentVertical(): VerticalId {
+  return verticalEl.value as VerticalId;
+}
+
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -86,6 +112,8 @@ function draw(): void {
     photoSize,
     transform,
     overlay,
+    logo: logos.get(currentVertical()) ?? null,
+    logoSize: currentVertical() === "cabronazi" ? null : BADGE_SIZE,
     inset,
     text: textEl.value,
     colorBase: baseEl.value,
@@ -464,6 +492,8 @@ textEl.addEventListener("input", draw);
 baseEl.addEventListener("input", draw);
 highEl.addEventListener("input", draw);
 ringEl.addEventListener("input", draw);
+verticalEl.addEventListener("change", draw);
+
 resetColorsEl.addEventListener("click", () => {
   baseEl.value = COLOR_BASE;
   highEl.value = COLOR_HIGHLIGHT;
@@ -494,6 +524,8 @@ generateEl.addEventListener("click", () => {
     photoSize,
     transform,
     overlay,
+    logo: logos.get(currentVertical()) ?? null,
+    logoSize: currentVertical() === "cabronazi" ? null : BADGE_SIZE,
     inset,
     text: textEl.value,
     colorBase: baseEl.value,
@@ -524,7 +556,14 @@ downloadEl.addEventListener("click", () => {
 /* ---------- arranque ---------- */
 
 async function boot(): Promise<void> {
-  overlay = await loadImage(overlayUrl);
+  const [ov, ...cargados] = await Promise.all([
+    loadImage(overlayUrl),
+    ...Object.entries(LOGO_URLS).map(async ([id, url]) => {
+      logos.set(id as VerticalId, await loadImage(url));
+    }),
+  ]);
+  overlay = ov as HTMLImageElement;
+  void cargados;
   // Sin esperar a la fuente, el primer render saldria con la tipografia de respaldo.
   try {
     await document.fonts.load(`${FONT_WEIGHT} 64px "${FONT_FAMILY}"`);

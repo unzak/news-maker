@@ -13,9 +13,11 @@ escribes el titular, y produce el PNG **1080 × 1350** listo para publicar.
    en la vista previa, la mueves (pinchando fuera reencuadras la foto).
 4. Escribe el titular. Lo que envuelvas en `*asteriscos*` sale en el color de
    resaltado, igual que "impulsarán la Liga F" en la plantilla original.
-5. Cambia los colores si quieres: base y resaltado del titular, y aro de la
+5. Elige la **vertical** si la noticia no es de Cabronazi: cambia el logo
+   central por el distintivo correspondiente.
+6. Cambia los colores si quieres: base y resaltado del titular, y aro de la
    mosca por separado. "Colores del PSD" devuelve los tres a su valor original.
-6. **GENERA**, y abajo aparece la imagen con el botón de descarga.
+7. **GENERA**, y abajo aparece la imagen con el botón de descarga.
 
 Para el zoom, la **rueda del ratón** en el ordenador y el **pellizco de dos dedos**
 en el móvil. Ambos actúan sobre la capa que hay debajo: encima de la mosca la escalan a
@@ -68,6 +70,7 @@ se adivinan mirando la imagen:
 | Fin del logo | y = 978 | capa `INFERIOR`, medido entre filetes |
 | Mosca por defecto | centro (828, 630), radio 168 | proporcion medida sobre una publicacion ya montada |
 | Aro de la mosca | 10% del radio (16,8 px por defecto) | ajustado a ojo sobre la referencia |
+| Caja del logo | (464, 852) 151 x 127 | posicion de la mascota dentro de la capa `INFERIOR` |
 
 Dos trampas que costaron encontrar, por si alguien vuelve por aquí:
 
@@ -81,9 +84,24 @@ Dos trampas que costaron encontrar, por si alguien vuelve por aquí:
   "con cuatro partidos en abierto" (1006,4 px de avance) una palabra antes de
   tiempo.
 
-`src/assets/overlay.png` es la capa `INFERIOR` extraída con alfa (degradado,
-logo y filetes). Se compone tal cual en lugar de reconstruirla, así que coincide
-con el PSD al pixel.
+## El overlay y los logos
+
+`src/assets/overlay.png` es la capa `INFERIOR` extraída con alfa, pero **sin el
+logo**: degradado y filetes solamente. Cada logo va aparte en
+`src/assets/logo-*.png`, para poder cambiarlo por vertical.
+
+Separarlos se pudo hacer sin pérdida porque el fondo bajo la mascota es negro
+puro, así que todo el color de esa zona es suyo. En premultiplicado el color del
+overlay **es** el de la mascota, y su alfa sale de `(ao - g) / (1 - g)`, donde
+`g` es el degradado medido en una columna limpia (x = 1060, pasado el final del
+filete). Donde el degradado ya es casi opaco ese divisor se dispara y amplifica
+el redondeo, así que por debajo de ahí el alfa se deriva del color, que sobre
+negro también es exacto. Recomponiendo las dos piezas, la diferencia con el
+overlay original es de 0,002 / 255 de media.
+
+Los distintivos de las demás verticales son circulares y se escalan al alto de
+la mascota (127 px), centrados en el hueco entre filetes. Así ocupan lo mismo y
+no hay que tocar `TEXT_SAFE_TOP`.
 
 ## Fuente
 

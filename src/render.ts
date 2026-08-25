@@ -8,6 +8,10 @@ import {
   FONT_WEIGHT,
   INSET_RING_MIN,
   INSET_RING_RATIO,
+  LOGO_H,
+  LOGO_W,
+  LOGO_X,
+  LOGO_Y,
   LINE_RATIO,
   OVERLAY_Y,
   PHOTO_H,
@@ -44,6 +48,10 @@ export interface RenderOptions {
   photoSize: { width: number; height: number } | null;
   transform: PhotoTransform;
   overlay: CanvasImageSource;
+  /** Logo de la vertical. Va aparte del overlay para poder cambiarlo. */
+  logo: CanvasImageSource | null;
+  /** Lado del logo, o null para dejar la mascota a su tamaño original. */
+  logoSize: number | null;
   inset: Inset | null;
   text: string;
   colorBase: string;
@@ -248,6 +256,19 @@ export function render(ctx: CanvasRenderingContext2D, opts: RenderOptions): void
   if (opts.inset) drawInset(ctx, opts.inset, opts.colorRing);
 
   ctx.drawImage(opts.overlay, 0, OVERLAY_Y, CANVAS_W, CANVAS_H - OVERLAY_Y);
+
+  if (opts.logo) {
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    if (opts.logoSize === null) {
+      // La mascota de Cabronazi va en su sitio y a su tamaño de siempre.
+      ctx.drawImage(opts.logo, LOGO_X, LOGO_Y, LOGO_W, LOGO_H);
+    } else {
+      // Los distintivos circulares se centran en el hueco entre filetes.
+      const s = opts.logoSize;
+      ctx.drawImage(opts.logo, LOGO_X + (LOGO_W - s) / 2, LOGO_Y + (LOGO_H - s) / 2, s, s);
+    }
+  }
 
   const tokens = tokenize(parseSegments(opts.text));
   if (tokens.length > 0) {
