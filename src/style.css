@@ -394,3 +394,40 @@ select:hover {
   outline: 2px solid var(--text);
   outline-offset: 2px;
 }
+
+/* Interruptor de modo de la mosca */
+.modes {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.mode {
+  flex: 1 1 auto;
+  padding: 9px 12px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.mode:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.mode.is-active {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* En modo encuadre, el cursor sobre la mosca ya no promete moverla. */
+.preview.over-inset.frame-mode {
+  cursor: grab;
+}

@@ -67,6 +67,18 @@
           </label>
           <input type="range" id="inset-zoom" min="1" max="3" step="0.01" value="1" />
 
+          <label id="inset-mode-label">
+            Al arrastrar sobre la mosca
+            <span class="muted small">
+              · la rueda y el pellizco siguen el mismo modo. Si al encuadrar no
+              se mueve, es que no sobra imagen: amplía antes con el zoom
+            </span>
+          </label>
+          <div class="modes" role="group" aria-labelledby="inset-mode-label">
+            <button type="button" class="mode is-active" data-mode="move">Mover la mosca</button>
+            <button type="button" class="mode" data-mode="frame">Encuadrar la imagen</button>
+          </div>
+
           <button type="button" id="inset-remove" class="btn-secondary">Quitar mosca</button>
         </div>
 

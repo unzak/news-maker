@@ -12,8 +12,9 @@ escribes el titular, y produce el PNG **1080 × 1350** listo para publicar.
    previa mueves la imagen.
 4. Si quieres **mosca**, añade la segunda imagen: sale recortada en circulo con
    un aro, que tiene su propio color en la fila de abajo. Una barra cambia el
-   tamaño del círculo y otra el zoom de la imagen de dentro. Pinchando encima en
-   la vista previa la mueves (pinchando fuera reencuadras la foto).
+   tamaño del círculo y otra el zoom de la imagen de dentro. Un interruptor
+   decide que hacen los gestos sobre la mosca: mover el círculo o encuadrar su
+   contenido.
 5. Escribe el titular. Lo que envuelvas en `*asteriscos*` sale en el color de
    resaltado, igual que "impulsarán la Liga F" en la plantilla original.
 6. Cambia los colores si quieres: base y resaltado del titular, y aro de la
@@ -22,10 +23,15 @@ escribes el titular, y produce el PNG **1080 × 1350** listo para publicar.
 7. **GENERA**, y abajo aparece la imagen con el botón de descarga.
 
 Para el zoom, la **rueda del ratón** en el ordenador y el **pellizco de dos dedos**
-en el móvil. Ambos actúan sobre la capa que hay debajo: encima de la mosca la escalan a
-ella, y en cualquier otro sitio hacen zoom de la foto de fondo. Al pellizcar, el
-punto medio de los dedos arrastra a la vez, así que se coloca y se dimensiona en
-un solo gesto.
+en el móvil. Ambos actúan sobre la capa que hay debajo: fuera de la mosca hacen
+zoom de la foto de fondo, y encima de ella siguen el modo elegido (tamaño del
+círculo o zoom de su contenido). Al pellizcar, el punto medio de los dedos
+arrastra a la vez, así que se coloca y se dimensiona en un solo gesto.
+
+El encuadre del contenido de la mosca está topado para que la imagen no deje
+nunca hueco dentro del círculo. Eso significa que solo se puede desplazar lo que
+sobra del encaje: con una imagen cuadrada a zoom 1 no sobra nada, así que hay
+que ampliar antes.
 
 En el móvil aparece una **miniatura flotante** abajo a la derecha en cuanto hay
 foto, para ir viendo el resultado mientras se escribe el titular. Se retira sola

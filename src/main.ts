@@ -22,6 +22,7 @@ import {
   ZOOM_MIN,
 } from "./format.js";
 import {
+  clampInsetOffset,
   hitsInset,
   render,
   type Inset,
@@ -76,6 +77,13 @@ let photoSize: { width: number; height: number } | null = null;
 let overlay: HTMLImageElement | null = null;
 const transform: PhotoTransform = { zoom: 1, offsetX: 0, offsetY: 0 };
 let inset: Inset | null = null;
+
+/**
+ * Que se manipula al actuar sobre la mosca: la mosca misma o su contenido.
+ * Manda sobre el arrastre, la rueda y el pellizco, para que dentro de un modo
+ * todos los gestos afecten a lo mismo.
+ */
+let insetMode: "move" | "frame" = "move";
 
 /**
  * Un archivo por vertical. Cabronazi es la mascota recortada de la capa
@@ -242,7 +250,7 @@ let lastX = 0;
 let lastY = 0;
 
 /** Estado del pellizco, mientras haya dos dedos apoyados. */
-let pinch: { dist: number; zoom: number; radius: number } | null = null;
+let pinch: { dist: number; zoom: number; radius: number; insetZoom: number } | null = null;
 
 /** El canvas se muestra escalado: pasar coordenadas de pantalla a px del lienzo. */
 function canvasScale(): number {
@@ -288,6 +296,7 @@ function startPinch(): void {
     dist: g.dist,
     zoom: transform.zoom,
     radius: inset?.radius ?? INSET_DEFAULT_R,
+    insetZoom: inset?.zoom ?? 1,
   };
   lastX = g.mx;
   lastY = g.my;
@@ -336,8 +345,14 @@ previewEl.addEventListener("pointermove", (e) => {
     if (!g || pinch.dist === 0) return;
     const ratio = g.dist / pinch.dist;
     if (dragTarget === "inset" && inset) {
-      inset.radius = clamp(pinch.radius * ratio, INSET_MIN_R, INSET_MAX_R);
-      insetSizeEl.value = String(Math.round(inset.radius));
+      if (insetMode === "frame") {
+        inset.zoom = clamp(pinch.insetZoom * ratio, ZOOM_MIN, ZOOM_MAX);
+        insetZoomEl.value = String(inset.zoom);
+      } else {
+        inset.radius = clamp(pinch.radius * ratio, INSET_MIN_R, INSET_MAX_R);
+        insetSizeEl.value = String(Math.round(inset.radius));
+      }
+      clampInsetOffset(inset);
     } else {
       transform.zoom = clamp(pinch.zoom * ratio, ZOOM_MIN, ZOOM_MAX);
       zoomEl.value = String(transform.zoom);
@@ -378,8 +393,14 @@ previewEl.addEventListener(
     // Exponencial, para que el paso se note igual en cualquier escala.
     const factor = Math.exp(-delta / WHEEL_DIVISOR);
     if (target === "inset" && inset) {
-      inset.radius = clamp(inset.radius * factor, INSET_MIN_R, INSET_MAX_R);
-      insetSizeEl.value = String(Math.round(inset.radius));
+      if (insetMode === "frame") {
+        inset.zoom = clamp(inset.zoom * factor, ZOOM_MIN, ZOOM_MAX);
+        insetZoomEl.value = String(inset.zoom);
+      } else {
+        inset.radius = clamp(inset.radius * factor, INSET_MIN_R, INSET_MAX_R);
+        insetSizeEl.value = String(Math.round(inset.radius));
+      }
+      clampInsetOffset(inset);
     } else {
       transform.zoom = clamp(transform.zoom * factor, ZOOM_MIN, ZOOM_MAX);
       zoomEl.value = String(transform.zoom);
@@ -392,6 +413,12 @@ previewEl.addEventListener(
 
 function move(target: Target, dx: number, dy: number): void {
   if (target === "inset" && inset) {
+    if (insetMode === "frame") {
+      inset.offsetX += dx;
+      inset.offsetY += dy;
+      clampInsetOffset(inset);
+      return;
+    }
     // Dejar siempre un trozo dentro del lienzo para poder recuperarla.
     inset.cx = clamp(inset.cx + dx, 0, CANVAS_W);
     inset.cy = clamp(inset.cy + dy, 0, PHOTO_H);
@@ -442,8 +469,10 @@ async function useInsetFile(file: File): Promise<void> {
       cx: inset?.cx ?? INSET_DEFAULT_CX,
       cy: inset?.cy ?? INSET_DEFAULT_CY,
       radius: inset?.radius ?? INSET_DEFAULT_R,
-      // La imagen es nueva, asi que su zoom vuelve al encaje justo.
+      // La imagen es nueva, asi que su encuadre vuelve al punto de partida.
       zoom: 1,
+      offsetX: 0,
+      offsetY: 0,
     };
     insetSizeEl.value = String(inset.radius);
     insetZoomEl.value = "1";
@@ -482,14 +511,27 @@ dropInsetEl.addEventListener("drop", (e) => {
 insetSizeEl.addEventListener("input", () => {
   if (!inset) return;
   inset.radius = Number(insetSizeEl.value);
+  clampInsetOffset(inset);
   draw();
 });
 
 insetZoomEl.addEventListener("input", () => {
   if (!inset) return;
   inset.zoom = Number(insetZoomEl.value);
+  clampInsetOffset(inset);
   draw();
 });
+
+for (const b of document.querySelectorAll<HTMLButtonElement>(".mode")) {
+  b.addEventListener("click", () => {
+    insetMode = b.dataset.mode === "frame" ? "frame" : "move";
+    for (const o of document.querySelectorAll(".mode")) {
+      o.classList.toggle("is-active", o === b);
+    }
+    // El cursor de la previa cambia de significado con el modo.
+    previewEl.classList.toggle("frame-mode", insetMode === "frame");
+  });
+}
 
 insetRemoveEl.addEventListener("click", () => {
   inset = null;
@@ -497,7 +539,11 @@ insetRemoveEl.addEventListener("click", () => {
   fileInsetEl.value = "";
   fileInsetNameEl.textContent = "Sin mosca";
   insetZoomEl.value = "1";
-  previewEl.classList.remove("over-inset");
+  insetMode = "move";
+  for (const o of document.querySelectorAll(".mode")) {
+    o.classList.toggle("is-active", (o as HTMLElement).dataset.mode === "move");
+  }
+  previewEl.classList.remove("over-inset", "frame-mode");
   draw();
 });
 

@@ -43,6 +43,9 @@ export interface Inset {
   radius: number;
   /** Zoom del contenido dentro del circulo. 1 = encaje "cover" justo. */
   zoom: number;
+  /** Encuadre del contenido dentro del circulo, en px de lienzo. */
+  offsetX: number;
+  offsetY: number;
 }
 
 export interface RenderOptions {
@@ -203,6 +206,26 @@ export function photoRect(
   };
 }
 
+/** Escala con la que el contenido cubre el circulo, zoom incluido. */
+function contentScale(inset: Inset): number {
+  const d = inset.radius * 2;
+  return Math.max(d / inset.size.width, d / inset.size.height) * inset.zoom;
+}
+
+/**
+ * Recorta el encuadre para que la imagen siga tapando todo el circulo. Con el
+ * encaje "cover" siempre sobra imagen por algun lado: eso es justo lo que se
+ * puede desplazar, y ni un pixel mas.
+ */
+export function clampInsetOffset(inset: Inset): void {
+  const d = inset.radius * 2;
+  const s = contentScale(inset);
+  const maxX = Math.max(0, (inset.size.width * s - d) / 2);
+  const maxY = Math.max(0, (inset.size.height * s - d) / 2);
+  inset.offsetX = Math.min(maxX, Math.max(-maxX, inset.offsetX));
+  inset.offsetY = Math.min(maxY, Math.max(-maxY, inset.offsetY));
+}
+
 function drawInset(
   ctx: CanvasRenderingContext2D,
   inset: Inset,
@@ -219,14 +242,18 @@ function drawInset(
   ctx.beginPath();
   ctx.arc(inset.cx, inset.cy, inset.radius, 0, Math.PI * 2);
   ctx.clip();
-  const d = inset.radius * 2;
-  const scale =
-    Math.max(d / inset.size.width, d / inset.size.height) * inset.zoom;
+  const scale = contentScale(inset);
   const w = inset.size.width * scale;
   const h = inset.size.height * scale;
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
-  ctx.drawImage(inset.image, inset.cx - w / 2, inset.cy - h / 2, w, h);
+  ctx.drawImage(
+    inset.image,
+    inset.cx - w / 2 + inset.offsetX,
+    inset.cy - h / 2 + inset.offsetY,
+    w,
+    h,
+  );
   ctx.restore();
 
   // El aro va por fuera de la imagen, no la recorta.
