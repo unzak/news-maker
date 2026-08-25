@@ -41,6 +41,8 @@ export interface Inset {
   cx: number;
   cy: number;
   radius: number;
+  /** Zoom del contenido dentro del circulo. 1 = encaje "cover" justo. */
+  zoom: number;
 }
 
 export interface RenderOptions {
@@ -218,7 +220,8 @@ function drawInset(
   ctx.arc(inset.cx, inset.cy, inset.radius, 0, Math.PI * 2);
   ctx.clip();
   const d = inset.radius * 2;
-  const scale = Math.max(d / inset.size.width, d / inset.size.height);
+  const scale =
+    Math.max(d / inset.size.width, d / inset.size.height) * inset.zoom;
   const w = inset.size.width * scale;
   const h = inset.size.height * scale;
   ctx.imageSmoothingEnabled = true;

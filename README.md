@@ -9,8 +9,9 @@ escribes el titular, y produce el PNG **1080 × 1350** listo para publicar.
 2. Ajusta el encuadre: el deslizador hace zoom, y arrastrando sobre la vista
    previa mueves la imagen.
 3. Si quieres **mosca**, añade la segunda imagen: sale recortada en circulo con
-   un aro, que tiene su propio color en la fila de abajo. La barra cambia su tamaño y, pinchando encima
-   en la vista previa, la mueves (pinchando fuera reencuadras la foto).
+   un aro, que tiene su propio color en la fila de abajo. Una barra cambia el tamaño del
+   círculo y otra el zoom de la imagen de dentro. Pinchando encima en la vista
+   previa la mueves (pinchando fuera reencuadras la foto).
 4. Escribe el titular. Lo que envuelvas en `*asteriscos*` sale en el color de
    resaltado, igual que "impulsarán la Liga F" en la plantilla original.
 5. Elige la **vertical** si la noticia no es de Cabronazi: cambia el logo

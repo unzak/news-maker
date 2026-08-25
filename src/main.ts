@@ -56,6 +56,7 @@ const pickInsetEl = need<HTMLButtonElement>("pick-inset");
 const fileInsetNameEl = need<HTMLParagraphElement>("file-inset-name");
 const insetControlsEl = need<HTMLDivElement>("inset-controls");
 const insetSizeEl = need<HTMLInputElement>("inset-size");
+const insetZoomEl = need<HTMLInputElement>("inset-zoom");
 const insetRemoveEl = need<HTMLButtonElement>("inset-remove");
 const previewEl = need<HTMLCanvasElement>("preview");
 const outputEl = need<HTMLElement>("output");
@@ -437,8 +438,11 @@ async function useInsetFile(file: File): Promise<void> {
       cx: inset?.cx ?? INSET_DEFAULT_CX,
       cy: inset?.cy ?? INSET_DEFAULT_CY,
       radius: inset?.radius ?? INSET_DEFAULT_R,
+      // La imagen es nueva, asi que su zoom vuelve al encaje justo.
+      zoom: 1,
     };
     insetSizeEl.value = String(inset.radius);
+    insetZoomEl.value = "1";
     insetControlsEl.hidden = false;
     fileInsetNameEl.textContent = `${file.name} · ${img.naturalWidth}×${img.naturalHeight}`;
     setStatus("Mosca añadida. Arrástrala en la vista previa para colocarla.");
@@ -477,11 +481,18 @@ insetSizeEl.addEventListener("input", () => {
   draw();
 });
 
+insetZoomEl.addEventListener("input", () => {
+  if (!inset) return;
+  inset.zoom = Number(insetZoomEl.value);
+  draw();
+});
+
 insetRemoveEl.addEventListener("click", () => {
   inset = null;
   insetControlsEl.hidden = true;
   fileInsetEl.value = "";
   fileInsetNameEl.textContent = "Sin mosca";
+  insetZoomEl.value = "1";
   previewEl.classList.remove("over-inset");
   draw();
 });
