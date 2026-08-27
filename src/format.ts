@@ -7,8 +7,14 @@
 export const CANVAS_W = 1080;
 export const CANVAS_H = 1350;
 
-/** Area que ocupa la capa FOTO. Por debajo ya manda la banda negra. */
-export const PHOTO_H = 972;
+/**
+ * Hasta donde llega la foto. La capa FOTO del PSD acaba en 972, pero ahi el
+ * degradado todavia deja pasar 3/255 de imagen: el salto a cero se veia como
+ * una linea que cruzaba el ancho entero. Se lleva por debajo de la primera
+ * fila totalmente opaca del degradado (989), asi el corte cae donde ya no se
+ * ve nada. Si se retoca el degradado, hay que volver a mirar ese numero.
+ */
+export const PHOTO_H = 990;
 
 /** La capa INFERIOR (degradado + logo + filetes) se pega en y=670. */
 export const OVERLAY_Y = 670;

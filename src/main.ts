@@ -26,6 +26,7 @@ import {
 } from "./format.js";
 import {
   clampInsetOffset,
+  clampPhotoOffset,
   hitsInset,
   render,
   type Inset,
@@ -125,6 +126,9 @@ function loadImage(src: string): Promise<HTMLImageElement> {
 
 function draw(): void {
   if (!overlay || !ruleGlow || !ruleCore) return;
+  // Centralizado aqui: asi ningun gesto puede dejar un encuadre invalido.
+  if (photoSize) clampPhotoOffset(photoSize, transform);
+  if (inset) clampInsetOffset(inset);
   render(previewCtx!, {
     photo,
     photoSize,

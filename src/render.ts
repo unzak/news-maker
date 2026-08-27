@@ -196,7 +196,24 @@ function fitText(
   return { size: 28, lines: layoutLines(ctx, tokens, TEXT_MAX_W) };
 }
 
-/** Encaje "cover" de la foto en el area 1080x972, mas zoom y desplazamiento. */
+/**
+ * Recorta el encuadre de la foto para que siga cubriendo toda su area. Sin
+ * esto, arrastrando lo suficiente se destapa un borde y vuelve a verse el
+ * corte, ademas de aparecer negro por los lados.
+ */
+export function clampPhotoOffset(
+  photoSize: { width: number; height: number },
+  transform: PhotoTransform,
+): void {
+  const scale =
+    Math.max(CANVAS_W / photoSize.width, PHOTO_H / photoSize.height) * transform.zoom;
+  const maxX = Math.max(0, (photoSize.width * scale - CANVAS_W) / 2);
+  const maxY = Math.max(0, (photoSize.height * scale - PHOTO_H) / 2);
+  transform.offsetX = Math.min(maxX, Math.max(-maxX, transform.offsetX));
+  transform.offsetY = Math.min(maxY, Math.max(-maxY, transform.offsetY));
+}
+
+/** Encaje "cover" de la foto en el area de foto, mas zoom y desplazamiento. */
 export function photoRect(
   photoSize: { width: number; height: number },
   transform: PhotoTransform,

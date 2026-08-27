@@ -69,7 +69,7 @@ se adivinan mirando la imagen:
 | Dato | Valor | Origen |
 | --- | --- | --- |
 | Lienzo | 1080 × 1350, 300 dpi | cabecera del PSD |
-| Foto | 1080 × 972 | capa `FOTO` |
+| Foto | 1080 × 990 | capa `FOTO` (972) llevada hasta donde el degradado tapa del todo |
 | Overlay | en y = 670 | capa `INFERIOR` |
 | Fuente | Poppins Bold 64,59 px | `FontSize` 54.72179 × escala 1.1803 de la capa |
 | Interlineado | 77,51 px | `AutoLeading` 1.2 × cuerpo |
@@ -123,6 +123,26 @@ se pinta encima sin tocarlo.
 color recto el halo sale un 10 % más claro, porque la mezcla con el fondo ocurre
 en premultiplicado. Con los valores correctos, la banda del filete reproduce el
 PSD con 1,84 / 255 de diferencia media.
+
+## El degradado
+
+Una vez fuera el logo y los filetes, el overlay es solo el desvanecido, así que
+se regeneró como **función pura de la altura**: cada fila lleva un alfa y todas
+las columnas valen igual. Pasó de 40 KB a 4 KB, y la diferencia entre columnas
+es exactamente 0.
+
+Eso arregla dos defectos que venían del PSD y se veían como líneas cortantes:
+
+- La capa original traía una **mancha rojiza pegada al borde izquierdo** que
+  cortaba en seco a media altura (a x = 20 el color pasa de `92,32,43` a
+  `9,3,4` en una sola fila). Solo afectaba a los ~60 px de la izquierda.
+- La foto se recortaba en y = 972, donde el degradado **todavía deja pasar
+  3/255** de imagen. Ese salto a cero cruzaba el ancho entero. Ahora la foto
+  llega a 990, por debajo de la primera fila totalmente opaca (989), y la cola
+  del degradado baja de un nivel por fila.
+
+El perfil quedó monótono, con un paso máximo de 3/255 en la parte más inclinada
+(y = 875), que es lo más suave que permiten 8 bits en esa pendiente.
 
 ## Fuente
 
