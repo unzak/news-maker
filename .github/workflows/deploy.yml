@@ -24,7 +24,11 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+      # `npm ci` llego a colgarse 7 minutos en silencio con la cache ya
+      # restaurada: espera de red. --no-audit quita la consulta de
+      # vulnerabilidades, que es una peticion aparte al registro, y
+      # --prefer-offline hace que tire de la cache antes que de la red.
+      - run: npm ci --prefer-offline --no-audit --fund=false
       - run: npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

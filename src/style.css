@@ -431,3 +431,71 @@ select:hover {
 .preview.over-inset.frame-mode {
   cursor: grab;
 }
+
+/* La revision del texto va antes de la imagen, junto a la cabecera del bloque. */
+.review {
+  max-width: 620px;
+  margin: 0 auto 20px;
+  padding: 12px 16px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  text-align: left;
+  font-size: 13px;
+}
+
+.review p {
+  margin: 0;
+}
+
+/* El enlace obligatorio a LanguageTool, arriba a la derecha del cuadro. */
+.review-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.review-head p {
+  font-weight: 600;
+}
+
+.review .lt {
+  flex: none;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.review ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.review li {
+  margin-bottom: 4px;
+}
+
+.review q {
+  color: var(--error);
+}
+
+.review-fix {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+#review-proposal {
+  color: var(--text);
+}
+
+#fix {
+  flex: none;
+  padding: 6px 12px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}

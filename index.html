@@ -132,6 +132,20 @@
         <h2>Imagen generada</h2>
         <button type="button" id="download" class="btn-primary">Descargar PNG</button>
       </div>
+      <div class="review" id="review" hidden>
+        <div class="review-head">
+          <p id="review-title"></p>
+          <a class="lt" href="https://languagetool.org" target="_blank" rel="noopener"
+            >LanguageTool</a
+          >
+        </div>
+        <ul id="review-list" hidden></ul>
+        <div class="review-fix" id="review-fix" hidden>
+          <p id="review-proposal"></p>
+          <button type="button" id="fix" class="btn-secondary">CORREGIR</button>
+        </div>
+      </div>
+
       <canvas id="result" class="result" width="1080" height="1350"></canvas>
       <p class="muted small" id="result-info"></p>
     </section>

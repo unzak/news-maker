@@ -32,6 +32,7 @@ import {
   type Inset,
   type PhotoTransform,
 } from "./render.js";
+import { applyFixes, check, type Issue } from "./spell.js";
 import "./style.css";
 
 function need<T extends Element>(id: string): T {
@@ -65,6 +66,12 @@ const previewEl = need<HTMLCanvasElement>("preview");
 const outputEl = need<HTMLElement>("output");
 const resultEl = need<HTMLCanvasElement>("result");
 const resultInfoEl = need<HTMLParagraphElement>("result-info");
+const reviewEl = need<HTMLDivElement>("review");
+const reviewTitleEl = need<HTMLParagraphElement>("review-title");
+const reviewListEl = need<HTMLUListElement>("review-list");
+const reviewFixEl = need<HTMLDivElement>("review-fix");
+const reviewProposalEl = need<HTMLParagraphElement>("review-proposal");
+const fixEl = need<HTMLButtonElement>("fix");
 const downloadEl = need<HTMLButtonElement>("download");
 const previewPanelEl = need<HTMLElement>("preview-panel");
 const miniEl = need<HTMLDivElement>("mini");
@@ -617,7 +624,7 @@ function stamp(): string {
   return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
 }
 
-generateEl.addEventListener("click", () => {
+function generate(): void {
   if (!overlay || !ruleGlow || !ruleCore) return;
   if (!photo) {
     setStatus("Añade una imagen antes de generar.", "error");
@@ -647,6 +654,74 @@ generateEl.addEventListener("click", () => {
   resultInfoEl.textContent = `PNG ${CANVAS_W} × ${CANVAS_H} px · sin pérdida`;
   setStatus("Imagen generada abajo.");
   outputEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  // La revision va aparte y no se espera: la imagen ya esta hecha.
+  void review(textEl.value);
+}
+
+generateEl.addEventListener("click", generate);
+
+/* ---------- revision del texto ---------- */
+
+/** Ultimo texto revisado con exito, para no preguntar dos veces por lo mismo. */
+let reviewed = "";
+/** Cada revision anula el pintado de la anterior, que pudo tardar mas. */
+let reviewToken = 0;
+/** Texto propuesto por la ultima revision, el que aplica CORREGIR. */
+let proposal = "";
+
+function setReview(title: string, issues: Issue[] = []): void {
+  reviewEl.hidden = false;
+  reviewTitleEl.textContent = title;
+
+  reviewListEl.replaceChildren();
+  reviewListEl.hidden = issues.length === 0;
+  for (const issue of issues) {
+    const li = document.createElement("li");
+    const marked = document.createElement("q");
+    marked.textContent = issue.text;
+    li.append(marked);
+    if (issue.replacements.length > 0) {
+      const to = document.createElement("b");
+      to.textContent = issue.replacements.join(", ");
+      li.append(" → ", to);
+    }
+    const why = document.createElement("span");
+    why.className = "muted";
+    why.textContent = ` · ${issue.message}`;
+    li.append(why);
+    reviewListEl.append(li);
+  }
+
+  // La propuesta solo sale si de verdad cambia algo respecto a lo escrito.
+  proposal = issues.length > 0 ? applyFixes(textEl.value, issues) : "";
+  const usable = proposal !== "" && proposal !== textEl.value;
+  reviewFixEl.hidden = !usable;
+  reviewProposalEl.textContent = usable ? proposal : "";
+}
+
+async function review(text: string): Promise<void> {
+  if (text.trim() === reviewed) return;
+  const token = ++reviewToken;
+  setReview("Revisando el texto…");
+  try {
+    const issues = await check(text);
+    if (token !== reviewToken) return;
+    reviewed = text.trim();
+    const n = issues.length;
+    setReview(n === 0 ? "Sin erratas." : `${n} ${n === 1 ? "aviso" : "avisos"} en el texto`, issues);
+  } catch {
+    if (token !== reviewToken) return;
+    // Que no se pueda revisar no es un problema del titular, que ya esta hecho.
+    setReview("No se pudo revisar el texto.");
+  }
+}
+
+/** Aplica la propuesta al titular y rehace la imagen, que si no queda vieja. */
+fixEl.addEventListener("click", () => {
+  if (proposal === "" || proposal === textEl.value) return;
+  textEl.value = proposal;
+  draw();
+  generate();
 });
 
 downloadEl.addEventListener("click", () => {
