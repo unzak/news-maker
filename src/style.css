@@ -215,27 +215,29 @@ input[type="color"] {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 22px;
+  text-align: center;
 }
 
-.output-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.output-head h2 {
-  margin: 0;
+.output h2 {
+  margin: 0 0 16px;
   font-size: 18px;
 }
 
-.output-head .btn-primary {
-  width: auto;
-}
-
+/*
+ * La imagen generada va centrada. Es un bloque con ancho maximo, asi que sin
+ * margenes automaticos se queda pegada a la izquierda y desencaja con el cuadro
+ * de la revision, que si va centrado.
+ */
 .result {
   max-width: 480px;
+  margin: 0 auto;
+}
+
+/* El boton de descarga cierra el bloque, debajo de la imagen. */
+.output #download {
+  width: auto;
+  max-width: 320px;
+  margin-top: 18px;
 }
 
 @media (max-width: 900px) {
