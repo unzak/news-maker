@@ -162,11 +162,12 @@ function draw(): void {
 let miniDismissed = false;
 
 /**
- * Cuanto antes de que asome el apartado de la previa se retira la miniatura.
- * Justo encima esta el boton GENERA, asi que este margen hace que se quite
- * cuando el boton empieza a entrar por abajo, en vez de taparlo.
+ * Cuanto antes de que asome el apartado de la previa se retira la miniatura:
+ * con las dos a la vista sobra una. Poco margen a proposito, que en el movil
+ * el formulario entero cabe en dos pantallas y comerse mas es quedarse sin
+ * miniatura justo cuando sirve, escribiendo el rotulo.
  */
-const MINI_HIDE_MARGIN = 120;
+const MINI_HIDE_MARGIN = 40;
 
 /** Copia la previa grande en la miniatura: mas barato que volver a componer. */
 function drawMini(): void {

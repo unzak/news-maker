@@ -422,6 +422,14 @@ input[type="color"] {
 }
 
 @media (max-width: 900px) {
+  /*
+   * La barra encoge con los enlaces mas juntos, y lo que cuelga de ella
+   * tiene que enterarse.
+   */
+  :root {
+    --nav-h: 48px;
+  }
+
   body {
     padding: 0 14px 48px;
   }
@@ -476,13 +484,18 @@ input[type="color"] {
   cursor: move;
 }
 
-/* Vista previa flotante (solo movil) */
+/*
+ * Vista previa flotante (solo movil). Estaba abajo a la derecha, que es donde
+ * descansa el pulgar y por donde entran GENERA y la descarga: tapaba justo lo
+ * que se iba a pulsar. Ahora cuelga de la barra de herramientas.
+ */
 .mini {
   position: fixed;
+  top: calc(var(--nav-h) + 16px);
   right: 12px;
-  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-  z-index: 50;
-  width: 140px;
+  /* Por encima del contenido y por debajo del velo de soltar el archivo. */
+  z-index: 35;
+  width: 120px;
   padding: 5px;
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -502,7 +515,7 @@ input[type="color"] {
 @keyframes mini-in {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(-12px);
   }
 }
 
