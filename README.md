@@ -36,13 +36,13 @@ que ampliar antes.
 
 En el móvil aparece una **miniatura flotante** arriba a la derecha, colgada de
 la barra de herramientas, en cuanto hay foto: sirve para ir viendo el resultado
-mientras se escribe el titular. Se retira sola al llegar al apartado de la vista previa,
-se cierra con la ✕ (y ya no vuelve en esa sesión), y tocándola salta a la previa
-completa.
+mientras se escribe el titular. Se retira sola al llegar al apartado de la vista
+previa, se cierra con la ✕ (y ya no vuelve en esa sesión), y tocándola salta a
+la previa completa.
 
-Va arriba y no abajo a la derecha, que es donde estaba en news-maker: ahí
-descansa el pulgar, y por ese filo entran GENERA y el botón de descarga, así que
-tapaba justo lo que se iba a pulsar.
+Va arriba y no abajo a la derecha, que es donde estuvo hasta ahora: ahí descansa
+el pulgar, y por ese filo entran GENERA y el botón de descarga, así que tapaba
+justo lo que se iba a pulsar.
 
 El titular se ajusta solo: parte las líneas donde toca y, si es muy largo,
 reduce el cuerpo hasta que quepa sin invadir el filete ni el borde inferior.

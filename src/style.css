@@ -208,17 +208,11 @@ body {
   letter-spacing: -0.065em;
 }
 
-.top p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 14px;
-}
-
 .layout {
   max-width: 1180px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+  grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
   gap: 24px;
   align-items: start;
 }
@@ -373,15 +367,40 @@ input[type="color"] {
 .preview,
 .result {
   display: block;
-  width: 100%;
   height: auto;
   border-radius: 10px;
   background: var(--ink);
 }
 
+/*
+ * La cama de la previa, igual que en memegenerator y videomemegenerator.
+ */
+.stage {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+/*
+ * En la columna ancha la previa se topa por alto, no por ancho: un 4:5 a todo
+ * lo ancho media 900 px y no cabia en la ventana. El alto maximo descuenta la
+ * barra de herramientas y lo que ocupa el panel alrededor del lienzo.
+ */
 .preview {
+  width: auto;
+  max-width: 100%;
+  max-height: 70vh;
   cursor: grab;
   touch-action: none;
+}
+
+@media (min-width: 901px) {
+  .preview {
+    max-height: calc(100vh - var(--nav-h) - 220px);
+  }
 }
 
 .preview:active {
@@ -410,6 +429,7 @@ input[type="color"] {
  * de la revision, que si va centrado.
  */
 .result {
+  width: 100%;
   max-width: 480px;
   margin: 0 auto;
 }
