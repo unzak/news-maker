@@ -4,17 +4,88 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>News Maker · Cabronazi</title>
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#ed1470" />
     <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!--
+      Inter es la letra de la interfaz, la misma que declara el panel Pulso
+      Viral. Va en variable para que los pesos intermedios (750, 850) salgan
+      exactos y no redondeados al peso estatico mas cercano.
+    -->
+    <!--
+      Poppins no es decoracion: es la tipografia con la que se rotula el PNG,
+      asi que se queda aunque la interfaz ya no la use.
+    -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&family=Poppins:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
   </head>
   <body>
+    <!--
+      El menu de las tres herramientas. Los enlaces apuntan a GitHub Pages, que
+      es donde vive cada una; en local solo responde en localhost la que se
+      esta sirviendo, las otras dos saltan a la publicada.
+    -->
+    <nav class="tools" aria-label="Herramientas">
+      <div class="tools-inner">
+        <a
+          class="tool is-current"
+          href="https://unzak.github.io/news-maker/"
+          aria-label="News Maker"
+          aria-current="page"
+        >
+          <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+            <rect x="4" y="3" width="16" height="18" rx="2.5" />
+            <path d="M8 8h8M8 12h8M8 16h5" />
+          </svg>
+          <span class="tool-name">News Maker</span>
+          <span class="tool-name-short" aria-hidden="true">News</span>
+        </a>
+        <a
+          class="tool"
+          href="https://unzak.github.io/memegenerator/"
+          aria-label="Meme Generator"
+        >
+          <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+            <rect x="3" y="4.5" width="18" height="15" rx="2.5" />
+            <circle cx="8.6" cy="10" r="1.5" />
+            <path d="m4.5 17.5 4.4-4.4a1.8 1.8 0 0 1 2.6 0l5 5" />
+          </svg>
+          <span class="tool-name">Meme Generator</span>
+          <span class="tool-name-short" aria-hidden="true">Meme</span>
+        </a>
+        <a
+          class="tool"
+          href="https://unzak.github.io/videomemegenerator/"
+          aria-label="Video Meme Generator"
+        >
+          <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="16" rx="2.5" />
+            <path d="M3 9h18" />
+            <path d="m7.6 4 2.4 5M13.1 4l2.4 5" />
+          </svg>
+          <span class="tool-name">Video Meme Generator</span>
+          <span class="tool-name-short" aria-hidden="true">Video</span>
+        </a>
+      </div>
+    </nav>
+
     <header class="top">
-      <h1>News Maker</h1>
+      <div class="brand-kicker"><span class="live-dot"></span> Taller Cabronazi</div>
+      <div class="brand">
+        <img
+          class="brand-logo"
+          src="/src/assets/favicon.svg"
+          alt=""
+          width="96"
+          height="96"
+          decoding="async"
+        />
+        <h1>News Maker</h1>
+      </div>
       <p>Generador de noticias para el Facebook de Cabronazi · 1080 × 1350</p>
     </header>
 

@@ -144,7 +144,29 @@ Eso arregla dos defectos que venían del PSD y se veían como líneas cortantes:
 El perfil quedó monótono, con un paso máximo de 3/255 en la parte más inclinada
 (y = 875), que es lo más suave que permiten 8 bits en esa pendiente.
 
-## Fuente
+## Fuentes
 
-Poppins se carga desde Google Fonts. Si vas a usarlo sin conexión, descarga el
-woff2 y sírvelo desde el propio proyecto.
+Poppins se carga desde Google Fonts: es la del titular del PNG, la de la capa
+TEXTO del PSD. La interfaz usa Inter, también de Google Fonts, que es la que
+declara el panel [Pulso Viral](https://github.com/unzak/noticias-virales). Si
+vas a usarlo sin conexión, descarga los woff2 y sírvelos desde el propio
+proyecto.
+
+## Aspecto
+
+La página lleva el mismo aire que el panel
+[Pulso Viral](https://github.com/unzak/noticias-virales): fondo rosa muy claro
+con dos degradados anclados a la ventana, papel blanco con sombra rosada, el
+rosa `#ed1470` de acento, Inter en la interfaz y una cabecera con el rótulo del
+punto, el icono y el titular grande.
+
+Arriba va el menú de las tres herramientas, pegado al borde superior: la
+abierta en la pastilla rosa y las otras dos a un clic. Los enlaces apuntan a
+GitHub Pages, así que sirviendo en local solo responde en `localhost` la que
+tengas levantada; las otras saltan a la publicada. Por debajo de 560 px se
+quedan los nombres cortos, que los tres enteros no caben.
+
+Es solo la piel. Los colores viven en las variables de `src/style.css`, así que
+el PNG que se descarga no se entera de nada. La cama del lienzo sigue siendo
+oscura a propósito (`--ink`): la foto se juzga sobre negro de estudio, no sobre
+rosa.
